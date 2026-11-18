@@ -1,0 +1,1914 @@
+<title>GEBPSOICS Portal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: top bar + left module rail + working area. Dense tables, one royal blue brand colour. */
+:root{
+  --bg:#f1f4fa;--surface:#ffffff;--surface-2:#f5f7fc;--ink:#13203a;--muted:#59688a;--line:#dae1ef;
+  --brand:#1d4ed8;--brand-ink:#ffffff;--brand-soft:#e4ebfd;--accent:#c98300;
+  --good:#17713f;--good-soft:#e0f2e8;--warn:#8f5700;--warn-soft:#fbefd5;--bad:#b3261e;--bad-soft:#fbe4e2;
+  --overlay:rgba(12,22,30,.55);
+  --font-body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --font-head:'Space Grotesk','Inter',system-ui,sans-serif;
+  --radius:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b1220;--surface:#131b2d;--surface-2:#182239;--ink:#e6ecf8;--muted:#93a1bd;--line:#26314b;
+  --brand:#7ba3ff;--brand-ink:#0a1a40;--brand-soft:#172750;--accent:#f0b429;
+  --good:#5fd19a;--good-soft:#123424;--warn:#f2b84b;--warn-soft:#3a2c0e;--bad:#ff8f86;--bad-soft:#3d1a18;
+  --overlay:rgba(0,0,0,.65);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1220;--surface:#131b2d;--surface-2:#182239;--ink:#e6ecf8;--muted:#93a1bd;--line:#26314b;
+  --brand:#7ba3ff;--brand-ink:#0a1a40;--brand-soft:#172750;--accent:#f0b429;
+  --good:#5fd19a;--good-soft:#123424;--warn:#f2b84b;--warn-soft:#3a2c0e;--bad:#ff8f86;--bad-soft:#3d1a18;
+  --overlay:rgba(0,0,0,.65);color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-head);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:24px;line-height:1.2}h2{font-size:18px}h3{font-size:15px}
+p{margin:0}
+small{color:var(--muted);font-size:12px}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:var(--surface-2);padding:1px 5px;border-radius:5px;border:1px solid var(--line)}
+a{color:var(--brand)}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.ic{width:18px;height:18px;flex:none}
+
+.shell{padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.topbar{max-width:1280px;margin:0 auto 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.brand b{font-family:var(--font-head);font-size:18px;letter-spacing:.02em;display:block;line-height:1.1}
+.brand small{display:block}
+.emblem{width:34px;height:34px;flex:none}
+.brand.big .emblem{width:44px;height:44px}
+.who{display:flex;align-items:center;gap:10px}
+.who b{display:block;line-height:1.2}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-weight:700;font-size:13px}
+.app{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:208px minmax(0,1fr);gap:20px;align-items:start}
+.side{display:flex;flex-direction:column;gap:2px;position:sticky;top:12px}
+.side a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-weight:500}
+.side a:hover{background:var(--surface);color:var(--ink)}
+.side a.on{background:var(--brand);color:var(--brand-ink)}
+#view{min-width:0;display:flex;flex-direction:column;gap:16px}
+@media (max-width:899px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px;gap:6px}
+  .side a{white-space:nowrap;background:var(--surface);border:1px solid var(--line)}
+  .side a.on{border-color:var(--brand)}
+}
+
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.page-head p{color:var(--muted);margin-top:2px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;min-width:0}
+.card>h2,.card>h3{margin-bottom:10px}
+.card.flush{padding:0}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--line)}
+.toolbar input[type=search]{flex:1 1 220px;min-width:0}
+.btn{font:inherit;font-weight:600;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--surface-2)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}
+.btn.danger.solid{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btn.sm{height:30px;padding:0 10px;font-size:12.5px}
+.btn.block{width:100%}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;height:36px;padding:0 10px;min-width:0;max-width:100%}
+input[type=checkbox]{height:auto;width:auto}
+input::placeholder{color:var(--muted)}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--surface-2)}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--surface-2)}
+td.num,th.num{text-align:right}
+td.low{color:var(--bad);font-weight:700}
+td.acts{white-space:nowrap;text-align:right}
+td.acts .btn+.btn{margin-left:4px}
+tfoot td{font-weight:700;background:var(--surface-2);border-top:1px solid var(--line)}
+td small{display:block}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600;background:var(--surface-2);color:var(--muted);border:1px solid var(--line);white-space:nowrap}
+.pill.good{background:var(--good-soft);color:var(--good);border-color:transparent}
+.pill.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.pill.bad{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-top:1px solid var(--line);color:var(--muted);flex-wrap:wrap}
+.empty{padding:32px 16px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);margin-bottom:2px}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+.tile span{display:block;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.tile b{display:block;font-family:var(--font-head);font-size:30px;line-height:1.15;margin-top:4px;font-variant-numeric:tabular-nums}
+.tile small{display:block;margin-top:2px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px}
+.bars{display:flex;flex-direction:column;gap:10px}
+.barrow{display:grid;grid-template-columns:70px minmax(0,1fr) 96px;gap:10px;align-items:center}
+.barrow .lbl{font-weight:600}
+.track{height:12px;background:var(--surface-2);border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.fill{height:100%;background:var(--brand);border-radius:6px}
+.fill.alt{background:var(--accent)}
+.barrow .val{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.barrow .val small{font-weight:400}
+.feed{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.feed li{padding:8px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.feed li:last-child{border-bottom:0}
+.feed time{color:var(--muted);font-size:12px;white-space:nowrap}
+.banner{display:flex;gap:10px;align-items:flex-start;background:var(--warn-soft);color:var(--warn);border-radius:var(--radius);padding:10px 14px}
+.banner p{flex:1}
+.quick{display:flex;gap:8px;flex-wrap:wrap}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:0}
+.tabs button{font:inherit;font-weight:600;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;color:var(--muted);cursor:pointer;margin-bottom:-1px}
+.tabs button.on{color:var(--brand);border-bottom-color:var(--brand)}
+.split{display:grid;grid-template-columns:minmax(0,280px) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:899px){.split{grid-template-columns:minmax(0,1fr)}}
+.picklist{display:flex;flex-direction:column;max-height:420px;overflow-y:auto}
+.picklist button{font:inherit;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:9px 12px;cursor:pointer;color:var(--ink)}
+.picklist button:hover{background:var(--surface-2)}
+.picklist button.on{background:var(--brand-soft)}
+.picklist small{display:block}
+.rc-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px;border-bottom:1px solid var(--line)}
+.rc-head dl{margin:0;display:grid;grid-template-columns:auto auto;gap:2px 12px;font-size:13px}
+.rc-head dt{color:var(--muted)}
+.rc-head dd{margin:0;font-weight:600}
+.rc-sum{display:flex;gap:24px;flex-wrap:wrap;padding:14px 16px;border-top:1px solid var(--line)}
+.rc-sum div b{display:block;font-family:var(--font-head);font-size:22px}
+.grade-in{width:64px;text-align:center;font-variant-numeric:tabular-nums;padding:0 4px}
+.grade-in.bad{border-color:var(--bad);background:var(--bad-soft)}
+.dirty{color:var(--warn);font-weight:600}
+.reports{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:899px){.reports{grid-template-columns:minmax(0,1fr)}}
+.rlist{display:flex;flex-direction:column;gap:6px}
+.rlist button{font:inherit;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;cursor:pointer;color:var(--ink)}
+.rlist button.on{border-color:var(--brand);background:var(--brand-soft)}
+.rlist b{display:block}
+.rlist small{display:block}
+.params{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;padding:12px;border-bottom:1px solid var(--line)}
+.params label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted);font-weight:600}
+.params .grow{margin-left:auto}
+.rhead{padding:12px 16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+
+.overlay{position:fixed;inset:0;background:var(--overlay);display:flex;align-items:flex-start;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow-y:auto;z-index:50}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;width:100%;max-width:480px;margin:auto}
+.modal.wide{max-width:640px}
+.modal h2{margin-bottom:12px}
+.modal p.msg{color:var(--muted);margin-bottom:4px}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:520px){.fgrid{grid-template-columns:minmax(0,1fr)}}
+.fld{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fld>span{font-size:12.5px;font-weight:600}
+.fld>span b{color:var(--bad)}
+.fld.full{grid-column:1/-1}
+.fld input,.fld select{width:100%}
+.ferr{color:var(--bad);background:var(--bad-soft);padding:8px 12px;border-radius:8px;margin-top:12px;font-weight:500}
+.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;flex-wrap:wrap}
+.chk{display:flex;align-items:center;gap:6px;color:var(--muted)}
+.login{min-height:100vh;display:grid;place-items:center}
+.login-card{width:100%;max-width:380px;display:flex;flex-direction:column;gap:14px;padding:24px}
+.login-card .hint{color:var(--muted);font-size:12.5px;text-align:center}
+.toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:6px;z-index:80;align-items:center;pointer-events:none;width:max-content;max-width:calc(100vw - 32px)}
+.toast{background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.toast.err{background:var(--bad);color:#fff}
+.note{max-width:1280px;margin:16px auto 0;color:var(--muted);font-size:12.5px}
+textarea.csv{width:100%;height:180px;padding:8px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;resize:vertical;min-height:84px}
+.badge{margin-left:auto;background:var(--accent);color:#1b1300;border-radius:999px;font-size:11px;font-weight:700;padding:1px 7px;min-width:20px;text-align:center}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px}
+.thread{display:flex;flex-direction:column;gap:12px;padding:16px;max-height:420px;overflow-y:auto}
+.msg{max-width:min(560px,92%);align-self:flex-start;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.msg.me{align-self:flex-end;background:var(--brand-soft);border-color:transparent}
+.msg .mh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.msg .mh time{color:var(--muted);font-size:12px;margin-left:auto}
+.reply{border-top:1px solid var(--line);padding:12px}
+.kv{display:grid;grid-template-columns:minmax(0,130px) minmax(0,1fr);gap:8px 12px;margin:0 0 14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:500;overflow-wrap:anywhere}
+.banner p{margin:0}
+button,.btn,.side a,[role=tab]{cursor:pointer}
+button:disabled,.btn:disabled{cursor:not-allowed}
+.btn,.tabs button,.rlist button,.picklist button,.side a,.switch{transition:background-color .15s,border-color .15s,color .15s,filter .15s,transform .1s}
+@media (hover:hover){
+  .btn:hover:not(:disabled){background:var(--brand-soft);border-color:var(--brand);color:var(--brand)}
+  .btn.primary:hover:not(:disabled){background:var(--brand);border-color:var(--brand);color:var(--brand-ink);filter:brightness(1.15)}
+  .btn.danger:hover:not(:disabled){background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+  .btn.danger.solid:hover:not(:disabled){background:var(--bad);border-color:var(--bad);color:#fff;filter:brightness(1.12)}
+  .tabs button:hover{color:var(--brand);background:var(--surface-2)}
+  .rlist button:hover{border-color:var(--brand);background:var(--brand-soft)}
+  .picklist button:hover{background:var(--brand-soft)}
+  .side a:hover{background:var(--brand-soft);color:var(--brand)}
+  .side a.on:hover{background:var(--brand);color:var(--brand-ink)}
+  .switch:hover{border-color:var(--brand)}
+}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.switch{position:relative;width:52px;height:28px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);cursor:pointer;padding:0;flex:none}
+.switch .thumb{position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center}
+.switch .thumb .ic{width:14px;height:14px}
+.switch .moon{display:none}
+.switch[aria-checked="true"] .thumb{transform:translateX(24px)}
+.switch[aria-checked="true"] .sun{display:none}
+.switch[aria-checked="true"] .moon{display:block}
+.login-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+@media (prefers-reduced-motion:no-preference){.switch .thumb{transition:transform .18s}}
+
+/* ---- interface polish ---- */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+h1{font-size:26px}
+.page-head{padding-bottom:2px}
+.page-head p{font-size:13.5px}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;box-shadow:0 1px 2px rgba(15,30,40,.06),0 6px 18px rgba(15,30,40,.05)}
+.card,.tile{box-shadow:0 1px 2px rgba(15,30,40,.04)}
+.grp{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;padding:14px 12px 4px}
+.grp:first-child{padding-top:4px}
+@media (min-width:900px){
+  .side{top:84px;max-height:calc(100vh - 100px);overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px;gap:2px}
+  .side a{padding:9px 12px}
+}
+@media (max-width:899px){.grp{display:none}.topbar{padding:8px 12px}.who b,.who small{display:none}}
+.tile{position:relative}
+.tile .ti{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:8px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-style:normal}
+.who-cell{display:flex;align-items:center;gap:10px}
+.who-cell b,.who-cell small{display:block}
+.ini{width:32px;height:32px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.pill.good,.pill.warn,.pill.bad{display:inline-flex;align-items:center;gap:6px}
+.pill.good::before,.pill.warn::before,.pill.bad::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.empty{padding:44px 16px}
+.empty b{font-family:var(--font-head);font-size:15px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.overlay{backdrop-filter:blur(3px)}
+.modal{position:relative;box-shadow:0 20px 50px rgba(0,0,0,.28)}
+.modal h2{padding-right:32px}
+.modal .x{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:8px;border:0;background:none;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
+.modal .x:hover{background:var(--surface-2);color:var(--ink)}
+.login{display:grid;place-items:center;min-height:100vh}
+.login-wrap{width:100%;max-width:900px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface);box-shadow:0 20px 50px rgba(15,30,40,.14)}
+.login-aside{background:var(--brand);color:var(--brand-ink);padding:36px 32px;display:flex;flex-direction:column;gap:18px;justify-content:center}
+.login-aside .emblem rect{fill:var(--brand-ink)}
+.login-aside .emblem path{stroke:var(--brand)}
+.login-aside h2{font-size:24px;line-height:1.25}
+.login-aside p{opacity:.85}
+.login-aside ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.login-aside li{display:flex;gap:8px;align-items:flex-start}
+.login-aside li::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;margin-top:8px;flex:none}
+.login-wrap .login-card{max-width:none;border:0;border-radius:0;box-shadow:none;padding:32px}
+@media (max-width:760px){.login-wrap{grid-template-columns:minmax(0,1fr)}.login-aside{padding:20px;gap:8px}.login-aside ul,.login-aside p{display:none}.login-aside h2{font-size:18px}.login-wrap .login-card{padding:20px}}
+@media (prefers-reduced-motion:no-preference){
+  #view>*{animation:rise .28s ease both}
+  .modal{animation:rise .2s ease both}
+  .overlay{animation:fade .15s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}}
+  @keyframes fade{from{opacity:0}}
+}
+@media (prefers-reduced-motion:no-preference){.toast{animation:pop .18s ease-out}@keyframes pop{from{opacity:0;transform:translateY(6px)}}}
+</style>
+
+<div id="root"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- constants ---------- */
+const KEY='gebpsoics.portal.v1', SKEY='gebpsoics.session.v1', SY='2026-2027';
+const GRADES=[7,8,9,10,11,12];
+const JHS=['Filipino','English','Mathematics','Science','Araling Panlipunan','Edukasyon sa Pagpapakatao','MAPEH','TLE'];
+const SHS=['Oral Communication','General Mathematics','Earth and Life Science','Komunikasyon at Pananaliksik','Physical Education and Health','Empowerment Technologies'];
+const subjectsFor=g=>Number(g)>=11?SHS:JHS;
+const DEPTS=['Filipino','English','Mathematics','Science','Araling Panlipunan','Edukasyon sa Pagpapakatao','MAPEH','TLE','Senior High'];
+const POSITIONS=['Teacher I','Teacher II','Teacher III','Master Teacher I','Master Teacher II','Head Teacher'];
+const ROLES=['Administrator','Registrar','Teacher','Student','Parent'];
+const FAMILY=['Student','Parent'];
+const QLABEL={1:'1st Quarter',2:'2nd Quarter',3:'3rd Quarter',final:'Final'};
+
+const svg=p=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const ICON={
+  dashboard:svg('<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>'),
+  teachers:svg('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'),
+  students:svg('<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/>'),
+  enrollment:svg('<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>'),
+  users:svg('<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5 7-5s7 1.5 7 5"/><path d="M16 4.5a3.5 3.5 0 010 7M18 15c2.5.5 4 2 4 5"/>'),
+  grades:svg('<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>'),
+  'grades-viewing':svg('<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
+  reports:svg('<path d="M5 3h14v18H5z"/><path d="M8 8h8M8 12h8M8 16h5"/>'),
+  'my-grades':svg('<path d="M4 20h16M7 20v-7M12 20V5M17 20v-10"/>'),
+  messages:svg('<path d="M4 5h16v11H9l-5 4z"/>'),
+  profile:svg('<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.5-1.5 1.7-2 3-2s2.5.5 3 2M14 10h4M14 14h4"/>'),
+  forms:svg('<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h4"/><path d="M9 20h3"/>'),
+  sf10:svg('<path d="M12 3v12M7 10l5 5 5-5M4 19h16"/>'),
+  audit:svg('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>'),
+  sun:svg('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>'),
+  moon:svg('<path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/>'),
+  plus:svg('<path d="M12 5v14M5 12h14"/>')
+};
+const EMBLEM='<svg class="emblem" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--brand)"/><path d="M7 10.5c3-1.4 6-1.2 9 .8 3-2 6-2.2 9-.8V23c-3-1.2-6-1-9 .9-3-1.9-6-2.1-9-.9z" fill="none" stroke="var(--brand-ink)" stroke-width="1.6" stroke-linejoin="round"/><path d="M16 11.3v12.5" stroke="var(--brand-ink)" stroke-width="1.6"/></svg>';
+
+const ROUTES=[
+  {id:'dashboard',label:'Dashboard',roles:['Administrator','Registrar','Teacher','Student','Parent']},
+  {id:'teachers',label:'Teachers',roles:['Administrator']},
+  {id:'students',label:'Students',roles:['Administrator','Registrar']},
+  {id:'enrollment',label:'Enrollment',roles:['Administrator','Registrar']},
+  {id:'users',label:'Users',roles:['Administrator']},
+  {id:'grades',label:'Grades',roles:['Administrator','Teacher']},
+  {id:'grades-viewing',label:'Grades Viewing',roles:['Administrator','Registrar','Teacher']},
+  {id:'reports',label:'Reports',roles:['Administrator','Registrar']},
+  {id:'forms',label:'Forms',roles:['Administrator','Registrar']},
+  {id:'sf10',label:'SF10 Import/Export',roles:['Administrator','Registrar']},
+  {id:'audit',label:'Audit Trail',roles:['Administrator']},
+  {id:'my-grades',label:'My Grades',roles:['Student','Parent']},
+  {id:'messages',label:'Messages',roles:['Teacher','Student','Parent']},
+  {id:'profile',label:'My Profile',roles:['Administrator','Registrar','Teacher','Student','Parent']}
+];
+
+/* ---------- helpers ---------- */
+const $=(s,r)=>(r||document).querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=p=>p+Math.random().toString(36).slice(2,9);
+const byName=(a,b)=>(a.last+' '+a.first).localeCompare(b.last+' '+b.first);
+const iniOf=n=>`<span class="ini" aria-hidden="true">${esc(String(n).replace(/[^A-Za-z ]/g,'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase())}</span>`;
+const fullName=p=>`${p.last}, ${p.first}${p.middle?' '+p.middle.charAt(0)+'.':''}`;
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const age=b=>{if(!b)return '';const d=new Date(b),n=new Date();let a=n.getFullYear()-d.getFullYear();const m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate()))a--;return a};
+const fmtDate=t=>new Date(t).toLocaleString('en-PH',{dateStyle:'medium',timeStyle:'short'});
+const PILL={Create:'good',Import:'good','Login failed':'bad',Delete:'bad',Promoted:'good',Retained:'bad',Active:'good',Enrolled:'good',Passed:'good','Passed all':'good',Pending:'warn','On leave':'warn',Incomplete:'warn','In progress':'warn',Dropped:'bad',Failed:'bad',Disabled:'bad',Inactive:'bad','Transferred out':'','Not enrolled':'warn'};
+const pill=t=>`<span class="pill ${PILL[t]||''}">${esc(t)}</span>`;
+const hashPw=async pw=>{
+  const s='gebpsoics:'+pw;
+  try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+  catch(e){let h=5381;for(const ch of s)h=((h<<5)+h+ch.charCodeAt(0))>>>0;return 'x'+h.toString(16)}
+};
+
+/* ---------- storage ---------- */
+let db=null,session=null,storageOk=true;
+const load=()=>{try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){return null}};
+const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){storageOk=false}};
+const getUser=()=>db.users.find(u=>u.id===session)||null;
+function inferAction(m){
+  if(/^Signed in/.test(m))return 'Login';
+  if(/^Signed out/.test(m))return 'Logout';
+  if(/^(Added|Enrolled)/.test(m))return 'Create';
+  if(/^Imported/.test(m))return 'Import';
+  if(/^Exported/.test(m))return 'Export';
+  if(/^(Deleted|Removed|Cleared)/.test(m))return 'Delete';
+  return 'Update';
+}
+function moduleLabel(){const r=ROUTES.find(x=>x.id===activeRoute);return r?r.label:'System'}
+function auditRaw(en){
+  db.audit=db.audit||[];
+  db.audit.unshift(Object.assign({id:uid('a'),t:Date.now(),userId:'',who:'System',role:'',action:'Update',module:'System',detail:''},en));
+  if(db.audit.length>3000)db.audit.length=3000;
+}
+function commit(msg,action,mod){
+  if(msg){
+    const u=getUser();
+    db.log.unshift({t:Date.now(),who:u?u.name:'System',msg});db.log=db.log.slice(0,40);
+    auditRaw({userId:u?u.id:'',who:u?u.name:'System',role:u?u.role:'',action:action||inferAction(msg),module:mod||moduleLabel(),detail:msg});
+  }
+  persist();
+}
+
+/* ---------- sample data ---------- */
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function seed(){
+  const r=rng(2026);
+  const FEM=['Maria','Angelica','Jasmine','Kristine','Bea','Hazel','Ella','Trisha','Nicole','Joanna','Camille','Rhea','Shaira','Lovely','Mary Grace','Aira','Danica','Princess','Katrina','Alyssa','Jessa','Clarisse','Faith','Joy','Mikaela','Paula','Denise','Lyka','Ronalyn','Sheena'];
+  const MAL=['Juan','Mark','John Paul','Christian','Kenneth','Jericho','Carlo','Rafael','Joshua','Miguel','Angelo','Dominic','Gabriel','Renz','Allan','Vincent','Nathaniel','Francis','Lester','Bryan','Cedric','Jomar','Paolo','Ryan','Edgar','Jayson','Aldrin','Rommel','Harvey','Elmer'];
+  const LAST=['Dela Cruz','Santos','Reyes','Garcia','Mendoza','Bautista','Villanueva','Ramos','Aquino','Castillo','Flores','Navarro','Salvador','Domingo','Pascual','Soriano','Mercado','Tolentino','Manalo','Cruz','Lopez','Torres','Rivera','Gonzales','Fernandez','Valdez','Aguilar','Estrada','Magno','Ocampo'];
+  const SEC={7:['Sampaguita','Ilang-Ilang'],8:['Rosal','Camia'],9:['Dahlia','Orchid'],10:['Jasmine','Gumamela'],11:['STEM-A','ABM-A'],12:['STEM-B','HUMSS-A']};
+  const T=[['Rosario','Delos Santos','Filipino','Teacher III','7-Sampaguita'],['Antonio','Magsaysay','Mathematics','Master Teacher I','8-Rosal'],['Cristina','Dimagiba','English','Teacher II','9-Dahlia'],['Ramon','Pangilinan','Science','Teacher II','10-Jasmine'],['Lourdes','Evangelista','Araling Panlipunan','Teacher I','7-Ilang-Ilang'],['Eduardo','Macaraeg','MAPEH','Teacher II','8-Camia'],['Marites','Sicat','TLE','Teacher III','9-Orchid'],['Glenda','Manansala','Senior High','Teacher II','11-STEM-A']];
+  const teachers=T.map((t,i)=>({id:'t'+(i+1),empNo:'T-'+String(i+1).padStart(4,'0'),first:t[0],last:t[1],dept:t[2],position:t[3],email:(t[0]+'.'+t[1]).toLowerCase().replace(/\s/g,'')+'@example.com',phone:'0917 555 '+String(100+i*13),advisory:t[4],status:i===5?'On leave':'Active'}));
+  const students=[],enrollments=[],grades={},lrns=new Set();
+  let n=0;
+  const mk=(g,sec,status,type)=>{
+    const male=r()<.5,list=male?MAL:FEM;
+    let lrn;do{lrn='107'+String(100000000+Math.floor(r()*899999999))}while(lrns.has(lrn));lrns.add(lrn);
+    const s={id:'s'+(n+1),lrn,first:list[(n*7+3)%list.length],last:LAST[(n*11+5)%LAST.length],middle:LAST[(n*5+1)%LAST.length],sex:male?'M':'F',
+      birth:(2026-(g+6))+'-'+String(1+Math.floor(r()*12)).padStart(2,'0')+'-'+String(1+Math.floor(r()*28)).padStart(2,'0'),
+      address:'Brgy. '+['Poblacion','Mulawin','Tala','Bagong Silang','Sagrada'][n%5]+', Orani',guardian:(male?'Elena ':'Ramon ')+LAST[(n*11+5)%LAST.length],phone:'0928 555 '+String(1000+n*17).slice(-4),status:'Active'};
+    n++;students.push(s);
+    const e={id:'e'+n,studentId:s.id,sy:SY,grade:g,section:sec,type:type||'Continuing',status,date:'2026-06-0'+(1+Math.floor(r()*7))};
+    enrollments.push(e);
+    if(status==='Enrolled'){
+      const ab=78+r()*14;grades[e.id]={};
+      subjectsFor(g).forEach(sub=>{
+        const q1=Math.max(68,Math.min(99,Math.round(ab+(r()-.5)*10)));
+        const q2=Math.max(68,Math.min(99,Math.round(q1+(r()-.5)*5)));
+        grades[e.id][sub]=[q1,q2,null];
+      });
+    }
+  };
+  GRADES.forEach(g=>SEC[g].forEach(sec=>{for(let i=0;i<5;i++)mk(g,sec,'Enrolled')}));
+  mk(7,'Sampaguita','Pending','New');mk(8,'Rosal','Pending','Transferee');
+  // one learner with no enrollment yet
+  const male=false;const s={id:'s'+(n+1),lrn:'107'+String(100000000+Math.floor(r()*899999999)),first:'Liza',last:'Macapagal',middle:'Santos',sex:'F',birth:'2013-03-14',address:'Brgy. Poblacion, Orani',guardian:'Teresita Macapagal',phone:'0928 555 4421',status:'Active'};
+  students.push(s);
+  teachers.forEach(t=>{t.assignments=defaultAssignments(t)});
+  return {teachers,students,enrollments,grades,messages:[]};
+}
+async function seedUsers(students){
+  const mk=async(name,username,role,pw,extra)=>Object.assign({id:uid('u'),name,username,role,status:'Active',hash:await hashPw(pw),created:todayISO(),last:''},extra||{});
+  const s=(students||[])[0];
+  const out=[await mk('Portal Administrator','admin','Administrator','admin123'),await mk('School Registrar','registrar','Registrar','registrar123'),await mk('Rosario Delos Santos','teacher','Teacher','teacher123',{teacherId:'t1'})];
+  if(s){out.push(await mk(s.first+' '+s.last,'student','Student','student123',{studentId:s.id}));out.push(await mk(s.guardian||'Parent','parent','Parent','parent123',{studentId:s.id}))}
+  return out;
+}
+function addSampleThread(){
+  const s=db.students.find(x=>x.id==='s1'),t=db.teachers.find(x=>x.id==='t1');if(!s||!t)return;
+  const p=db.users.find(u=>u.role==='Parent'&&u.studentId==='s1'),tu=db.users.find(u=>u.role==='Teacher'&&u.teacherId==='t1');
+  const now=Date.now();
+  db.messages.push({id:uid('m'),studentId:s.id,teacherId:t.id,subject:'Filipino project requirements',reads:{},messages:[
+    {id:uid('x'),authorId:p?p.id:'parent',authorName:p?p.name:(s.guardian||'Parent'),role:'Parent',body:"Good afternoon, ma'am. Could you confirm when the Filipino group project is due? "+s.first+' wants to start early.',t:now-26*3600e3},
+    {id:uid('x'),authorId:tu?tu.id:'adviser',authorName:t.first+' '+t.last,role:'Adviser',body:'Good afternoon! The project is due on Friday, November 28. The rubric was posted in the class group chat.',t:now-20*3600e3}]});
+}
+
+/* ---------- grade logic ---------- */
+const sMap=()=>Object.fromEntries(db.students.map(s=>[s.id,s]));
+const getG=(eid,sub)=>(db.grades[eid]&&db.grades[eid][sub])||[null,null,null];
+const avg=a=>{const v=a.filter(x=>x!=null);return v.length?v.reduce((x,y)=>x+y,0)/v.length:null};
+const finalOf=a=>a.some(v=>v==null)?null:Math.round(a.reduce((x,y)=>x+y,0)/a.length);
+const remark=f=>f==null?'Incomplete':(f>=75?'Passed':'Failed');
+const descriptor=g=>g==null?'':g>=90?'Outstanding':g>=85?'Very Satisfactory':g>=80?'Satisfactory':g>=75?'Fairly Satisfactory':'Did Not Meet Expectations';
+const gradeFor=(e,sub,q)=>{const a=getG(e.id,sub);return q==='final'?finalOf(a):a[Number(q)-1]};
+function gaFor(e,q){const v=subjectsFor(e.grade).map(s=>gradeFor(e,s,q));return v.some(x=>x==null)?null:avg(v)}
+const f2=v=>v==null?'—':(Math.round(v*100)/100).toFixed(2);
+const curEnr=()=>db.enrollments.filter(e=>e.sy===SY);
+function enrolledIn(grade,section){
+  const S=sMap();
+  return db.enrollments.filter(e=>e.sy===SY&&e.status==='Enrolled'&&e.grade===Number(grade)&&(section==='all'||e.section===section)&&S[e.studentId]).sort((a,b)=>byName(S[a.studentId],S[b.studentId]));
+}
+function sectionsFor(grade){return [...new Set(db.enrollments.filter(e=>e.sy===SY&&e.grade===Number(grade)&&e.status==='Enrolled').map(e=>e.section))].sort()}
+function allSectionLabels(){return [...new Set(db.enrollments.filter(e=>e.sy===SY).map(e=>e.grade+'-'+e.section))].sort()}
+function adviserOf(e){const t=db.teachers.find(t=>t.advisory===e.grade+'-'+e.section);return t?t.first+' '+t.last:'—'}
+
+/* ---------- UI state ---------- */
+const ui={
+  teachers:{q:'',status:'',page:1},
+  students:{q:'',grade:'',status:'',page:1},
+  enrollment:{q:'',grade:'',status:'',page:1},
+  grades:{grade:7,section:'',subject:'',dirty:false},
+  gv:{tab:'learner',q:'',studentId:null,grade:7,section:'',quarter:'final'},
+  reports:{type:'masterlist',grade:'7',section:'all',quarter:'1'},
+  msg:{id:null},
+  forms:{id:'sf1',grade:7,section:'',studentId:''},
+  sf10:{tab:'records',q:'',studentId:null,imp:{text:'',res:null},ex:{scope:'learner',studentId:'',grade:'7',fmt:'csv',cur:true}},
+  audit:{q:'',module:'',action:'',user:'',from:'',to:'',page:1}
+};
+let activeRoute='';
+
+/* ---------- shared UI pieces ---------- */
+function toast(msg,kind){
+  const el=document.createElement('div');el.className='toast'+(kind==='err'?' err':'');el.textContent=msg;
+  $('#toasts').appendChild(el);setTimeout(()=>el.remove(),kind==='err'?4200:2600);
+}
+function modal(html,opts){
+  const o=document.createElement('div');o.className='overlay';
+  o.innerHTML=`<div class="modal${opts&&opts.wide?' wide':''}" role="dialog" aria-modal="true"><button type="button" class="x" data-close aria-label="Close">&times;</button>${html}</div>`;
+  document.body.appendChild(o);
+  let done=false;
+  const close=()=>{if(done)return;done=true;o.remove()};
+  const dismiss=()=>{if(done)return;close();if(opts&&opts.onDismiss)opts.onDismiss()};
+  o.addEventListener('mousedown',e=>{if(e.target===o)dismiss()});
+  o.addEventListener('click',e=>{if(e.target.closest('[data-close]'))dismiss()});
+  o.addEventListener('dismiss',dismiss);
+  return {el:o.firstElementChild,close};
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const all=document.querySelectorAll('.overlay');if(all.length)all[all.length-1].dispatchEvent(new Event('dismiss'))}});
+function confirmBox(title,msg,okLabel,onOk,onCancel){
+  const m=modal(`<h2>${esc(title)}</h2><p class="msg">${esc(msg)}</p><div class="actions"><button class="btn" data-close id="cb_no">Cancel</button><button class="btn danger solid" id="cb_yes">${esc(okLabel)}</button></div>`,{onDismiss:onCancel});
+  m.el.querySelector('#cb_yes').onclick=()=>{m.close();onOk()};
+  m.el.querySelector('#cb_no').focus();
+}
+function fieldHtml(f,val){
+  val=val==null?'':val;const id='f_'+f.key;let ctl;
+  if(f.type==='select'){
+    ctl=`<select id="${id}" name="${id}">${(f.options||[]).map(o=>{const ov=typeof o==='object'?o.v:o,ol=typeof o==='object'?o.l:o;return `<option value="${esc(ov)}"${String(ov)===String(val)?' selected':''}>${esc(ol)}</option>`}).join('')}</select>`;
+  }else if(f.type==='textarea'){
+    ctl=`<textarea id="${id}" name="${id}" rows="${f.rows||5}">${esc(val)}</textarea>`;
+  }else if(f.type==='combo'){
+    ctl=`<input id="${id}" name="${id}" list="dl_${f.key}" value="${esc(val)}" autocomplete="off"><datalist id="dl_${f.key}">${(f.options||[]).map(o=>`<option value="${esc(o)}">`).join('')}</datalist>`;
+  }else{
+    ctl=`<input id="${id}" name="${id}" type="${f.type||'text'}" value="${esc(val)}"${f.placeholder?` placeholder="${esc(f.placeholder)}"`:''}${f.maxlength?` maxlength="${f.maxlength}"`:''}${f.type==='password'?' autocomplete="new-password"':''}>`;
+  }
+  return `<label class="fld${f.full?' full':''}" for="${id}"><span>${esc(f.label)}${f.required?' <b aria-hidden="true">*</b>':''}</span>${ctl}${f.hint?`<small>${esc(f.hint)}</small>`:''}</label>`;
+}
+function openForm(o){
+  const values=o.values||{};
+  const m=modal(`<form novalidate><h2>${esc(o.title)}</h2><div class="fgrid">${o.fields.map(f=>fieldHtml(f,values[f.key])).join('')}</div><p class="ferr" role="alert" hidden></p><div class="actions"><button type="button" class="btn" data-close>Cancel</button><button type="submit" class="btn primary">${esc(o.submitLabel||'Save')}</button></div></form>`,{wide:o.wide});
+  const form=m.el.querySelector('form'),errEl=m.el.querySelector('.ferr');
+  const fail=(msg,el)=>{errEl.textContent=msg;errEl.hidden=false;if(el)el.focus();return false};
+  form.addEventListener('submit',ev=>{
+    ev.preventDefault();const out={};
+    for(const f of o.fields){
+      const el=form.elements['f_'+f.key];let v=el.value;if(f.type!=='password')v=v.trim();
+      if(f.required&&!v)return fail(f.label+' is required.',el);
+      out[f.key]=v;
+    }
+    for(const f of o.fields){if(f.validate&&(out[f.key]||f.required)){const msg=f.validate(out[f.key],out);if(msg)return fail(msg,form.elements['f_'+f.key])}}
+    const res=o.onSave(out);
+    if(res&&typeof res.then==='function'){res.then(msg=>{if(msg)fail(msg);else m.close()});return}
+    if(res)return fail(res);
+    m.close();
+  });
+  if(o.onReady)o.onReady(m.el);
+  const first=form.querySelector('input,select');if(first)setTimeout(()=>first.focus(),0);
+}
+function paginate(arr,page,per){const pages=Math.max(1,Math.ceil(arr.length/per));page=Math.min(Math.max(1,page),pages);return {items:arr.slice((page-1)*per,page*per),page,pages,total:arr.length}}
+const pagerHtml=p=>`<div class="pager"><span>${p.total} record${p.total===1?'':'s'}${p.pages>1?` · page ${p.page} of ${p.pages}`:''}</span>${p.pages>1?`<span><button class="btn sm" data-act="prev"${p.page<=1?' disabled':''}>Previous</button> <button class="btn sm" data-act="next"${p.page>=p.pages?' disabled':''}>Next</button></span>`:''}</div>`;
+const pageHead=(t,sub,act)=>`<div class="page-head"><div><h1>${esc(t)}</h1><p>${esc(sub)}</p></div><div class="quick">${act||''}</div></div>`;
+const emptyHtml=(t,s)=>`<div class="empty"><b>${esc(t)}</b>${esc(s||'')}</div>`;
+const tableHtml=(head,rows,foot)=>`<div class="tablewrap"><table><thead><tr>${head.map(h=>`<th${h.num?' class="num"':''}>${h.t}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody>${foot||''}</table></div>`;
+const options=(arr,sel)=>arr.map(o=>{const v=typeof o==='object'?o.v:o,l=typeof o==='object'?o.l:o;return `<option value="${esc(v)}"${String(v)===String(sel)?' selected':''}>${esc(l)}</option>`}).join('');
+const gradeOpts=(sel,all)=>(all?`<option value="">All grades</option>`:'')+GRADES.map(g=>`<option value="${g}"${String(g)===String(sel)?' selected':''}>Grade ${g}</option>`).join('');
+function copyText(text,label){
+  const fallback=()=>{
+    const m=modal(`<h2>Copy ${esc(label||'data')}</h2><p class="msg">Your browser blocked automatic copying. Select the text below and copy it.</p><textarea class="csv" readonly></textarea><div class="actions"><button class="btn" data-close>Close</button></div>`,{wide:true});
+    const ta=m.el.querySelector('textarea');ta.value=text;ta.focus();ta.select();
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(()=>toast('Copied to clipboard'),fallback);else fallback();
+}
+
+/* ---------- theme ---------- */
+const THEME_KEY='gebpsoics.theme';
+const isDark=()=>{const t=document.documentElement.getAttribute('data-theme');return t?t==='dark':!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)};
+function themeSwitch(){
+  const d=isDark();
+  return `<button type="button" class="switch" id="themeToggle" role="switch" aria-checked="${d}" aria-label="Dark theme" title="${d?'Switch to light theme':'Switch to dark theme'}"><span class="thumb"><span class="sun">${ICON.sun}</span><span class="moon">${ICON.moon}</span></span></button>`;
+}
+function bindTheme(){
+  const b=$('#themeToggle');if(!b)return;
+  b.onclick=()=>{
+    const next=isDark()?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    try{localStorage.setItem(THEME_KEY,next)}catch(e){}
+    b.setAttribute('aria-checked',String(next==='dark'));
+    b.title=next==='dark'?'Switch to light theme':'Switch to dark theme';
+  };
+}
+
+/* ---------- shell / routing ---------- */
+const MODULES={};
+function loginHtml(){
+  return `<div class="shell login"><div class="login-wrap"><aside class="login-aside"><div class="brand big">${EMBLEM}<div><b>GEBPSOICS</b><small style="color:inherit;opacity:.8">School Portal</small></div></div><h2>The whole school year in one place.</h2><p>One sign-in for administrators, teachers, students and parents.</p><ul><li>Grades and report cards</li><li>DepEd forms and SF10 records</li><li>Parent and adviser messages</li><li>A full audit trail</li></ul></aside><form class="card login-card" id="loginForm" novalidate>
+    <div class="login-top"><div class="brand big">${EMBLEM}<div><b>GEBPSOICS</b><small>School Portal</small></div></div>${themeSwitch()}</div>
+    <h1>Sign in</h1>
+    <label class="fld" for="lu"><span>Username</span><input id="lu" name="lu" autocomplete="username" autocapitalize="none"></label>
+    <label class="fld" for="lp"><span>Password</span><input id="lp" name="lp" type="password" autocomplete="current-password"></label>
+    <label class="chk" for="showpw"><input type="checkbox" id="showpw"> Show password</label>
+    <p class="ferr" id="lerr" role="alert" hidden style="margin-top:0"></p>
+    <button class="btn primary block" type="submit">Sign in</button>
+    ${db.meta.sample?'<p class="hint">Sample accounts (username / password):<br><code>admin</code> / <code>admin123</code> · <code>teacher</code> / <code>teacher123</code><br><code>student</code> / <code>student123</code> · <code>parent</code> / <code>parent123</code></p>':''}
+  </form></div></div>`;
+}
+function bindLogin(){
+  const f=$('#loginForm');$('#lu').focus();
+  $('#showpw').onchange=e=>{$('#lp').type=e.target.checked?'text':'password'};
+  f.onsubmit=async ev=>{
+    ev.preventDefault();
+    const un=$('#lu').value.trim().toLowerCase(),pw=$('#lp').value,err=$('#lerr');
+    const u=db.users.find(x=>x.username.toLowerCase()===un);
+    const h=await hashPw(pw);
+    if(!u||u.hash!==h){auditRaw({who:un||'(blank)',role:u?u.role:'',action:'Login failed',module:'Authentication',detail:u?'Wrong password':'Unknown username'});persist();err.textContent='Incorrect username or password.';err.hidden=false;return}
+    if(u.status!=='Active'){auditRaw({who:u.name,role:u.role,action:'Login failed',module:'Authentication',detail:'Disabled account blocked'});persist();err.textContent='This account is disabled. Ask an administrator to enable it.';err.hidden=false;return}
+    u.last=Date.now();session=u.id;try{sessionStorage.setItem(SKEY,u.id)}catch(e){}
+    commit('Signed in','Login','Authentication');location.hash='dashboard';render();
+  };
+}
+function render(){
+  const root=$('#root');
+  const u=getUser();
+  if(!u){root.innerHTML=loginHtml();bindLogin();bindTheme();return}
+  const allowed=ROUTES.filter(r=>r.roles.includes(u.role));
+  const id=location.hash.slice(1);
+  const r=allowed.find(x=>x.id===id)||allowed[0];
+  activeRoute=r.id;
+  const ini=u.name.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  root.innerHTML=`<div class="shell"><header class="topbar"><div class="brand">${EMBLEM}<div><b>GEBPSOICS</b><small>School Portal · SY ${SY}</small></div></div>
+    <div class="who">${themeSwitch()}<span class="avatar" aria-hidden="true">${esc(ini)}</span><div><b>${esc(u.name)}</b><small>${esc(u.role)}</small></div><button class="btn sm" id="signout">Sign out</button></div></header>
+    <div class="app"><nav class="side" aria-label="Modules">${allowed.map(x=>`<a href="#${x.id}"${x.id===r.id?' class="on" aria-current="page"':''}>${ICON[x.id]}<span>${x.id==='my-grades'&&u.role==='Parent'?'Learner Grades':x.label}</span>${x.id==='messages'&&unreadCount(u)?`<span class="badge">${unreadCount(u)}</span>`:''}</a>`).join('')}</nav><main id="view" tabindex="-1"></main></div>
+    ${storageOk?'':'<p class="note">This browser is not saving data. Changes will be lost when you close this page.</p>'}</div>`;
+  (function(){
+    const G={dashboard:'Overview',teachers:'People',students:'People',enrollment:'People',users:'People',grades:'Academics','grades-viewing':'Academics','my-grades':'Academics',messages:'Academics',reports:'Records',forms:'Records',sf10:'Records',audit:'Administration',profile:'Account'};
+    let last='';
+    document.querySelectorAll('.side a').forEach(a=>{const g=G[a.getAttribute('href').slice(1)];if(g&&g!==last){const d=document.createElement('div');d.className='grp';d.textContent=g;a.parentNode.insertBefore(d,a);last=g}});
+  })();
+  bindTheme();
+  $('#signout').onclick=()=>{ui.grades.dirty=false;commit('Signed out','Logout','Authentication');session=null;try{sessionStorage.removeItem(SKEY)}catch(e){}location.hash='';render()};
+  $('.side').addEventListener('click',e=>{
+    const a=e.target.closest('a');
+    if(a&&ui.grades.dirty&&activeRoute==='grades'){e.preventDefault();const to=a.getAttribute('href');confirmBox('Discard unsaved grades?','You have grade changes that have not been saved.','Discard',()=>{ui.grades.dirty=false;location.hash=to.slice(1)})}
+  });
+  MODULES[r.id]($('#view'));
+}
+window.addEventListener('hashchange',()=>{if(getUser())render()});
+
+/* ---------- Dashboard ---------- */
+MODULES.dashboard=function(view){
+  const u=getUser(),E=curEnr(),S=sMap();
+  if(FAMILY.includes(u.role))return familyHome(view);
+  if(u.role==='Teacher')return teacherHome(view);
+  const enrolled=E.filter(e=>e.status==='Enrolled'&&S[e.studentId]);
+  const pending=E.filter(e=>e.status==='Pending').length;
+  const secs=new Set(enrolled.map(e=>e.grade+'-'+e.section)).size;
+  const activeT=db.teachers.filter(t=>t.status==='Active').length;
+  const byG=GRADES.map(g=>{const l=enrolled.filter(e=>e.grade===g);return {g,n:l.length,m:l.filter(e=>S[e.studentId].sex==='M').length,f:l.filter(e=>S[e.studentId].sex==='F').length}});
+  const maxN=Math.max(1,...byG.map(x=>x.n));
+  const prog=[1,2,3].map(q=>{let tot=0,done=0;enrolled.forEach(e=>subjectsFor(e.grade).forEach(s=>{tot++;if(getG(e.id,s)[q-1]!=null)done++}));return {q,tot,done,pct:tot?Math.round(done/tot*100):0}});
+  const latest=[...prog].reverse().find(p=>p.done>0);
+  let atRisk=0;
+  if(latest)enrolled.forEach(e=>{if(subjectsFor(e.grade).some(s=>{const v=getG(e.id,s)[latest.q-1];return v!=null&&v<75}))atRisk++});
+  const can=id=>ROUTES.find(r=>r.id===id).roles.includes(u.role);
+  view.innerHTML=pageHead('Dashboard',`School year ${SY} · ${new Date().toLocaleDateString('en-PH',{dateStyle:'full'})}`)+
+  (db.meta.sample?`<div class="banner"><p>Sample records are loaded so you can try every module. Clear them under Users, then Data tools, before you start real encoding.</p></div>`:'')+
+  `<div class="tiles">
+    <div class="tile"><i class="ti">${ICON.students}</i><span>Enrolled learners</span><b>${enrolled.length}</b><small>${pending} pending approval</small></div>
+    <div class="tile"><i class="ti">${ICON.enrollment}</i><span>Sections</span><b>${secs}</b><small>across ${new Set(enrolled.map(e=>e.grade)).size} grade levels</small></div>
+    <div class="tile"><i class="ti">${ICON.teachers}</i><span>Active teachers</span><b>${activeT}</b><small>${db.teachers.length} on the roster</small></div>
+    <div class="tile"><i class="ti">${ICON.grades}</i><span>Below 75 in a subject</span><b>${latest?atRisk:'—'}</b><small>${latest?QLABEL[latest.q]:'No grades encoded yet'}</small></div>
+  </div>
+  <div class="two">
+    <section class="card"><h2>Enrollment by grade level</h2><div class="bars">${byG.map(x=>`<div class="barrow"><span class="lbl">Grade ${x.g}</span><div class="track"><div class="fill" style="width:${Math.round(x.n/maxN*100)}%"></div></div><span class="val">${x.n} <small>${x.m}M · ${x.f}F</small></span></div>`).join('')}</div></section>
+    <section class="card"><h2>Grade encoding progress</h2><div class="bars">${prog.map(p=>`<div class="barrow"><span class="lbl">Q${p.q}</span><div class="track"><div class="fill alt" style="width:${p.pct}%"></div></div><span class="val">${p.pct}% <small>${p.done}/${p.tot}</small></span></div>`).join('')}</div><p style="margin-top:12px"><small>Share of subject grades entered for enrolled learners.</small></p></section>
+  </div>
+  <div class="two">
+    <section class="card"><h2>Quick actions</h2><div class="quick">${can('students')?`<button class="btn primary" data-go="students" data-new="1">${ICON.plus} Add student</button>`:''}${can('enrollment')?`<button class="btn" data-go="enrollment" data-new="1">${ICON.plus} Enroll learner</button>`:''}${can('grades')?`<button class="btn" data-go="grades">Encode grades</button>`:''}${can('reports')?`<button class="btn" data-go="reports">Open reports</button>`:''}${can('messages')?`<button class="btn" data-go="messages">Messages</button>`:''}</div></section>
+    <section class="card"><h2>Recent activity</h2>${db.log.length?`<ul class="feed">${db.log.slice(0,6).map(l=>`<li><span><b>${esc(l.who)}</b> · ${esc(l.msg)}</span><time>${esc(fmtDate(l.t))}</time></li>`).join('')}</ul>`:emptyHtml('No activity yet','Changes you make will be listed here.')}</section>
+  </div>`;
+  view.onclick=e=>{const b=e.target.closest('[data-go]');if(!b)return;if(b.dataset.new)ui.pendingNew=b.dataset.go;location.hash=b.dataset.go};
+};
+
+/* ---------- Teachers ---------- */
+MODULES.teachers=function(view){
+  const st=ui.teachers;
+  view.innerHTML=pageHead('Teachers','Faculty roster, subject assignments and advisory classes',`<button class="btn primary" data-act="add">${ICON.plus} Add teacher</button>`)+
+  `<div class="card flush"><div class="toolbar"><input type="search" id="tq" placeholder="Search name, employee no. or department" value="${esc(st.q)}" aria-label="Search teachers"><select id="ts" aria-label="Filter by status"><option value="">All statuses</option>${options(['Active','On leave','Inactive'],st.status)}</select></div><div id="list"></div></div>`;
+  const fields=(cur)=>[
+    {key:'empNo',label:'Employee no.',required:true,validate:v=>db.teachers.some(t=>t.empNo.toLowerCase()===v.toLowerCase()&&(!cur||t.id!==cur.id))?'That employee number is already used.':''},
+    {key:'status',label:'Status',type:'select',options:['Active','On leave','Inactive']},
+    {key:'last',label:'Last name',required:true},{key:'first',label:'First name',required:true},
+    {key:'dept',label:'Department / subject',type:'combo',options:DEPTS,required:true},
+    {key:'position',label:'Position',type:'select',options:POSITIONS},
+    {key:'email',label:'Email',type:'email',validate:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)?'':'Enter a valid email address.'},
+    {key:'phone',label:'Contact no.'},
+    {key:'advisory',label:'Advisory class',type:'combo',options:allSectionLabels(),full:true,hint:'Optional. Format: grade-section, for example 7-Sampaguita.'}
+  ];
+  function list(){
+    const q=st.q.toLowerCase();
+    const rows=db.teachers.filter(t=>(!st.status||t.status===st.status)&&(!q||(t.empNo+' '+fullName(t)+' '+t.dept).toLowerCase().includes(q))).sort(byName);
+    const p=paginate(rows,st.page,15);st.page=p.page;
+    $('#list',view).innerHTML=p.total?tableHtml([{t:'Emp. no.'},{t:'Teacher'},{t:'Department'},{t:'Subjects taught'},{t:'Advisory'},{t:'Contact'},{t:'Status'},{t:''}],p.items.map(t=>`<tr><td>${esc(t.empNo)}</td><td><div class="who-cell">${iniOf(fullName(t))}<div><b>${esc(fullName(t))}</b><small>${esc(t.position)}</small></div></div></td><td>${esc(t.dept)}</td><td>${esc(assignText(t)||'None assigned')}</td><td>${esc(t.advisory||'—')}</td><td>${esc(t.phone||'')}<small>${esc(t.email||'')}</small></td><td>${pill(t.status)}</td><td class="acts"><button class="btn sm" data-act="assign" data-id="${t.id}">Subjects</button><button class="btn sm" data-act="edit" data-id="${t.id}">Edit</button><button class="btn sm danger" data-act="del" data-id="${t.id}">Delete</button></td></tr>`))+pagerHtml(p):emptyHtml('No teachers found','Try a different search or add a teacher.');
+  }
+  list();
+  const add=()=>openForm({title:'Add teacher',fields:fields(null),values:{empNo:'T-'+String(db.teachers.length+1).padStart(4,'0'),status:'Active',position:'Teacher I'},onSave(v){db.teachers.push(Object.assign({id:uid('t')},v));commit('Added teacher '+v.first+' '+v.last);list();toast('Teacher added')}});
+  view.oninput=e=>{if(e.target.id==='tq'){st.q=e.target.value;st.page=1;list()}else if(e.target.id==='ts'){st.status=e.target.value;st.page=1;list()}};
+  view.onclick=e=>{
+    const b=e.target.closest('[data-act]');if(!b)return;const t=db.teachers.find(x=>x.id===b.dataset.id);
+    ({add,prev(){st.page--;list()},next(){st.page++;list()},
+      assign(){openAssign(t,list)},
+      edit(){openForm({title:'Edit teacher',fields:fields(t),values:t,onSave(v){Object.assign(t,v);commit('Updated teacher '+t.first+' '+t.last);list();toast('Teacher updated')}})},
+      del(){confirmBox('Delete teacher?',`${t.first} ${t.last} will be removed from the roster.`,'Delete',()=>{db.teachers=db.teachers.filter(x=>x.id!==t.id);commit('Deleted teacher '+t.first+' '+t.last);list();toast('Teacher deleted')})}})[b.dataset.act]();
+  };
+  if(ui.pendingNew==='teachers'){ui.pendingNew=null;add()}
+};
+
+/* ---------- Students ---------- */
+function enrMapNow(){const m={};curEnr().forEach(e=>{if(!m[e.studentId]||e.status==='Enrolled')m[e.studentId]=e});return m}
+MODULES.students=function(view){
+  const st=ui.students;
+  view.innerHTML=pageHead('Students','Learner records and personal information',`<button class="btn primary" data-act="add">${ICON.plus} Add student</button>`)+
+  `<div class="card flush"><div class="toolbar"><input type="search" id="sq" placeholder="Search name, LRN or guardian" value="${esc(st.q)}" aria-label="Search students"><select id="sg" aria-label="Filter by grade">${gradeOpts(st.grade,true)}</select><select id="ss" aria-label="Filter by status"><option value="">All statuses</option>${options(['Active','Transferred','Dropped','Graduated'],st.status)}</select></div><div id="list"></div></div>`;
+  const fields=cur=>[
+    {key:'lrn',label:'LRN',required:true,maxlength:12,hint:'12-digit Learner Reference Number.',validate:v=>!/^\d{12}$/.test(v)?'LRN must be exactly 12 digits.':db.students.some(s=>s.lrn===v&&(!cur||s.id!==cur.id))?'That LRN already belongs to another learner.':''},
+    {key:'sex',label:'Sex',type:'select',options:[{v:'F',l:'Female'},{v:'M',l:'Male'}]},
+    {key:'last',label:'Last name',required:true},{key:'first',label:'First name',required:true},
+    {key:'middle',label:'Middle name'},{key:'birth',label:'Date of birth',type:'date',required:true},
+    {key:'guardian',label:'Parent / guardian'},{key:'phone',label:'Contact no.'},
+    {key:'address',label:'Address',full:true},
+    {key:'status',label:'Status',type:'select',options:['Active','Transferred','Dropped','Graduated']}
+  ];
+  function list(){
+    const E=enrMapNow(),q=st.q.toLowerCase();
+    const rows=db.students.filter(s=>{
+      if(q&&!(s.lrn+' '+fullName(s)+' '+(s.guardian||'')).toLowerCase().includes(q))return false;
+      if(st.status&&s.status!==st.status)return false;
+      if(st.grade){const e=E[s.id];if(!e||String(e.grade)!==st.grade)return false}
+      return true}).sort(byName);
+    const p=paginate(rows,st.page,15);st.page=p.page;
+    $('#list',view).innerHTML=p.total?tableHtml([{t:'LRN'},{t:'Learner'},{t:'Grade & section'},{t:'Guardian'},{t:'Status'},{t:''}],p.items.map(s=>{
+      const e=E[s.id];
+      return `<tr><td>${esc(s.lrn)}</td><td><div class="who-cell">${iniOf(fullName(s))}<div><b>${esc(fullName(s))}</b><small>${s.sex==='M'?'Male':'Female'} · ${age(s.birth)} yrs</small></div></div></td><td>${e?`Grade ${e.grade} - ${esc(e.section)}${e.status!=='Enrolled'?' '+pill(e.status):''}`:pill('Not enrolled')}</td><td>${esc(s.guardian||'—')}<small>${esc(s.phone||'')}</small></td><td>${pill(s.status)}</td><td class="acts"><button class="btn sm" data-act="grades" data-id="${s.id}"${e&&e.status==='Enrolled'?'':' disabled'}>Grades</button><button class="btn sm" data-act="edit" data-id="${s.id}">Edit</button><button class="btn sm danger" data-act="del" data-id="${s.id}">Delete</button></td></tr>`}))+pagerHtml(p):emptyHtml('No students found','Try a different search or add a student.');
+  }
+  list();
+  const add=()=>openForm({title:'Add student',fields:fields(null),wide:true,values:{sex:'F',status:'Active'},onSave(v){db.students.push(Object.assign({id:uid('s')},v));commit('Added student '+v.first+' '+v.last);list();toast('Student added. Enroll them in the Enrollment module.')}});
+  view.oninput=e=>{const id=e.target.id;if(id==='sq')st.q=e.target.value;else if(id==='sg')st.grade=e.target.value;else if(id==='ss')st.status=e.target.value;else return;st.page=1;list()};
+  view.onclick=e=>{
+    const b=e.target.closest('[data-act]');if(!b)return;const s=db.students.find(x=>x.id===b.dataset.id);
+    ({add,prev(){st.page--;list()},next(){st.page++;list()},
+      grades(){const en=enrMapNow()[s.id];ui.gv.tab='learner';ui.gv.studentId=s.id;ui.gv.grade=en.grade;location.hash='grades-viewing'},
+      edit(){openForm({title:'Edit student',fields:fields(s),wide:true,values:s,onSave(v){Object.assign(s,v);commit('Updated student '+s.first+' '+s.last);list();toast('Student updated')}})},
+      del(){confirmBox('Delete student?',`${s.first} ${s.last} and all of their enrollment and grade records will be permanently removed.`,'Delete',()=>{
+        const ids=db.enrollments.filter(x=>x.studentId===s.id).map(x=>x.id);ids.forEach(i=>delete db.grades[i]);
+        db.enrollments=db.enrollments.filter(x=>x.studentId!==s.id);db.students=db.students.filter(x=>x.id!==s.id);db.sf10=(db.sf10||[]).filter(r=>r.studentId!==s.id);purgeFiles(s.id);
+        commit('Deleted student '+s.first+' '+s.last);list();toast('Student deleted')})}})[b.dataset.act]();
+  };
+  if(ui.pendingNew==='students'){ui.pendingNew=null;add()}
+};
+
+/* ---------- Enrollment ---------- */
+MODULES.enrollment=function(view){
+  const st=ui.enrollment;
+  const counts=()=>{const E=curEnr();return ['Enrolled','Pending','Dropped','Transferred out'].map(s=>({s,n:E.filter(e=>e.status===s).length}))};
+  view.innerHTML=pageHead('Enrollment',`Enrollment records for school year ${SY}`,`<button class="btn primary" data-act="add">${ICON.plus} Enroll learner</button>`)+
+  `<div class="tiles" id="etiles"></div><div class="card flush"><div class="toolbar"><input type="search" id="eq" placeholder="Search learner name or LRN" value="${esc(st.q)}" aria-label="Search enrollments"><select id="eg" aria-label="Filter by grade">${gradeOpts(st.grade,true)}</select><select id="es" aria-label="Filter by status"><option value="">All statuses</option>${options(['Enrolled','Pending','Dropped','Transferred out'],st.status)}</select></div><div id="list"></div></div>`;
+  function tiles(){$('#etiles',view).innerHTML=counts().map(c=>`<div class="tile"><span>${c.s}</span><b>${c.n}</b></div>`).join('')}
+  function list(){
+    tiles();const S=sMap(),q=st.q.toLowerCase();
+    const rows=curEnr().filter(e=>{const s=S[e.studentId];if(!s)return false;if(st.grade&&String(e.grade)!==st.grade)return false;if(st.status&&e.status!==st.status)return false;return !q||(s.lrn+' '+fullName(s)).toLowerCase().includes(q)}).sort((a,b)=>a.grade-b.grade||a.section.localeCompare(b.section)||byName(S[a.studentId],S[b.studentId]));
+    const p=paginate(rows,st.page,15);st.page=p.page;
+    $('#list',view).innerHTML=p.total?tableHtml([{t:'LRN'},{t:'Learner'},{t:'Grade'},{t:'Section'},{t:'Type'},{t:'Date'},{t:'Status'},{t:''}],p.items.map(e=>{const s=S[e.studentId];return `<tr><td>${esc(s.lrn)}</td><td><b>${esc(fullName(s))}</b></td><td>Grade ${e.grade}</td><td>${esc(e.section)}</td><td>${esc(e.type)}</td><td>${esc(e.date)}</td><td>${pill(e.status)}</td><td class="acts">${e.status==='Pending'?`<button class="btn sm primary" data-act="confirm" data-id="${e.id}">Confirm</button>`:''}<button class="btn sm" data-act="edit" data-id="${e.id}">Edit</button><button class="btn sm danger" data-act="del" data-id="${e.id}">Remove</button></td></tr>`}))+pagerHtml(p):emptyHtml('No enrollment records','Enroll a learner to get started.');
+  }
+  list();
+  function fields(cur){
+    const taken=new Set(curEnr().filter(e=>!cur||e.id!==cur.id).map(e=>e.studentId));
+    const avail=db.students.filter(s=>!taken.has(s.id)&&(s.status==='Active'||(cur&&cur.studentId===s.id))).sort(byName).map(s=>({v:s.id,l:fullName(s)+' · '+s.lrn}));
+    return [
+      {key:'studentId',label:'Learner',type:'select',options:avail.length?avail:[{v:'',l:'No learners without an enrollment'}],full:true,required:true},
+      {key:'grade',label:'Grade level',type:'select',options:GRADES.map(g=>({v:g,l:'Grade '+g}))},
+      {key:'section',label:'Section',type:'combo',required:true,options:[]},
+      {key:'type',label:'Enrollment type',type:'select',options:['New','Continuing','Transferee','Returnee']},
+      {key:'status',label:'Status',type:'select',options:['Enrolled','Pending','Dropped','Transferred out']},
+      {key:'date',label:'Date',type:'date',required:true}
+    ];
+  }
+  const secOptions=g=>[...new Set(db.enrollments.filter(e=>e.sy===SY&&e.grade===Number(g)).map(e=>e.section))].sort();
+  function form(cur,preset){
+    openForm({title:cur?'Edit enrollment':'Enroll learner',fields:fields(cur),values:cur||Object.assign({grade:7,type:'New',status:'Enrolled',date:todayISO()},preset),
+      onReady(el){
+        const g=el.querySelector('#f_grade'),dl=el.querySelector('#dl_section');
+        const sync=()=>{dl.innerHTML=secOptions(g.value).map(o=>`<option value="${esc(o)}">`).join('')};sync();g.addEventListener('change',sync);
+      },
+      onSave(v){
+        if(!v.studentId)return 'Choose a learner.';
+        v.grade=Number(v.grade);
+        if(cur){Object.assign(cur,v);commit('Updated enrollment');}
+        else{db.enrollments.push(Object.assign({id:uid('e'),sy:SY},v));commit('Enrolled '+(sMap()[v.studentId]||{}).first+' in Grade '+v.grade+' - '+v.section)}
+        list();toast(cur?'Enrollment updated':'Learner enrolled');
+      }});
+  }
+  view.oninput=e=>{const id=e.target.id;if(id==='eq')st.q=e.target.value;else if(id==='eg')st.grade=e.target.value;else if(id==='es')st.status=e.target.value;else return;st.page=1;list()};
+  view.onclick=e=>{
+    const b=e.target.closest('[data-act]');if(!b)return;const en=db.enrollments.find(x=>x.id===b.dataset.id);
+    ({add(){form(null)},prev(){st.page--;list()},next(){st.page++;list()},
+      confirm(){en.status='Enrolled';commit('Confirmed enrollment of '+sMap()[en.studentId].first);list();toast('Enrollment confirmed')},
+      edit(){form(en)},
+      del(){const s=sMap()[en.studentId];confirmBox('Remove enrollment?',`${s.first} ${s.last} will be taken out of Grade ${en.grade} - ${en.section}. Grades entered for this enrollment are deleted too.`,'Remove',()=>{delete db.grades[en.id];db.enrollments=db.enrollments.filter(x=>x.id!==en.id);commit('Removed enrollment of '+s.first+' '+s.last);list();toast('Enrollment removed')})}})[b.dataset.act]();
+  };
+  if(ui.pendingNew==='enrollment'){ui.pendingNew=null;form(null)}
+};
+
+/* ---------- Users ---------- */
+const linkIds=v=>({studentId:FAMILY.includes(v.role)?v.studentId:'',teacherId:v.role==='Teacher'?v.teacherId:''});
+const linkCheck=v=>FAMILY.includes(v.role)&&!v.studentId?'Choose the learner this account belongs to.':'';
+function linkToggle(el){
+  const r=el.querySelector('#f_role'),a=el.querySelector('label[for="f_studentId"]'),b=el.querySelector('label[for="f_teacherId"]');
+  const sync=()=>{a.hidden=!FAMILY.includes(r.value);b.hidden=r.value!=='Teacher'};r.addEventListener('change',sync);sync();
+}
+function linkNote(u,S){
+  let t='';
+  if(FAMILY.includes(u.role)){const s=S[u.studentId];t=s?'Learner: '+fullName(s):'No learner linked'}
+  else if(u.role==='Teacher'&&u.teacherId){const x=db.teachers.find(y=>y.id===u.teacherId);if(x)t='Teacher record: '+x.first+' '+x.last}
+  return t?`<small>${esc(t)}</small>`:'';
+}
+MODULES.users=function(view){
+  const me=getUser();
+  const activeAdmins=()=>db.users.filter(u=>u.role==='Administrator'&&u.status==='Active').length;
+  const lastAdmin=(u,role,status)=>u.role==='Administrator'&&u.status==='Active'&&(role!=='Administrator'||status!=='Active')&&activeAdmins()<=1;
+  function draw(){
+    const S=sMap();
+    view.innerHTML=pageHead('Users','Portal accounts and what each role can open',`<button class="btn primary" data-act="add">${ICON.plus} Add user</button>`)+
+    `<div class="card flush">${tableHtml([{t:'Name'},{t:'Username'},{t:'Role'},{t:'Status'},{t:'Last sign-in'},{t:''}],db.users.map(u=>`<tr><td><b>${esc(u.name)}</b>${u.id===me.id?'<small>This is you</small>':''}</td><td>${esc(u.username)}</td><td>${esc(u.role)}${linkNote(u,S)}</td><td>${pill(u.status)}</td><td>${u.last?esc(fmtDate(u.last)):'Never'}</td><td class="acts"><button class="btn sm" data-act="edit" data-id="${u.id}">Edit</button><button class="btn sm" data-act="reset" data-id="${u.id}">Reset password</button><button class="btn sm" data-act="toggle" data-id="${u.id}">${u.status==='Active'?'Disable':'Enable'}</button><button class="btn sm danger" data-act="del" data-id="${u.id}">Delete</button></td></tr>`))}</div>
+    <div class="two"><section class="card"><h2>Role access</h2><p><b>Administrator</b>: every module.</p><p style="margin-top:6px"><b>Registrar</b>: students, enrollment, grades viewing and reports.</p><p style="margin-top:6px"><b>Teacher</b>: grade entry, grades viewing and adviser messages.</p><p style="margin-top:6px"><b>Student</b> and <b>Parent</b>: the linked learner's grades, profile and messages to the adviser.</p></section>
+    <section class="card"><h2>Data tools</h2><p style="color:var(--muted);margin-bottom:12px">Records are kept in this browser. Use these when moving from the sample data to your real records.</p><div class="quick"><button class="btn" data-act="sample">Reload sample data</button><button class="btn danger" data-act="clear">Clear all records</button></div></section></div>`;
+  }
+  draw();
+  const userFields=(cur)=>[
+    {key:'name',label:'Full name',required:true,full:true},
+    {key:'username',label:'Username',required:true,validate:v=>!/^[A-Za-z0-9._-]{3,}$/.test(v)?'Username needs 3 or more letters, numbers, dots, dashes or underscores.':db.users.some(u=>u.username.toLowerCase()===v.toLowerCase()&&(!cur||u.id!==cur.id))?'That username is taken.':''},
+    {key:'role',label:'Role',type:'select',options:ROLES},
+    {key:'status',label:'Status',type:'select',options:['Active','Disabled']},
+    {key:'studentId',label:'Linked learner',type:'select',full:true,hint:'Required for Student and Parent accounts.',options:[{v:'',l:'Choose a learner'}].concat(db.students.slice().sort(byName).map(s=>({v:s.id,l:fullName(s)+' · '+s.lrn})))},
+    {key:'teacherId',label:'Linked teacher record',type:'select',full:true,hint:'Lets this teacher receive adviser messages.',options:[{v:'',l:'None'}].concat(db.teachers.map(t=>({v:t.id,l:fullName(t)+(t.advisory?' · adviser of '+t.advisory:'')})))}
+  ];
+  const pwField={key:'password',label:'Password',type:'password',required:true,full:true,hint:'At least 6 characters.',validate:v=>v.length<6?'Password must be at least 6 characters.':''};
+  view.onclick=e=>{
+    const b=e.target.closest('[data-act]');if(!b)return;const u=db.users.find(x=>x.id===b.dataset.id);
+    ({
+      add(){openForm({title:'Add user',fields:userFields(null).concat([pwField]),values:{role:'Teacher',status:'Active'},onReady:linkToggle,onSave(v){
+        const bad=linkCheck(v);if(bad)return bad;
+        hashPw(v.password).then(h=>{db.users.push({id:uid('u'),name:v.name,username:v.username,role:v.role,status:v.status,studentId:linkIds(v).studentId,teacherId:linkIds(v).teacherId,hash:h,created:todayISO(),last:''});commit('Added user '+v.username);draw();toast('User added')})}})},
+      edit(){openForm({title:'Edit user',fields:userFields(u),values:u,onReady:linkToggle,onSave(v){
+        const bad=linkCheck(v);if(bad)return bad;
+        if(u.id===me.id&&(v.role!==u.role||v.status!=='Active'))return 'You cannot change your own role or disable your own account.';
+        if(lastAdmin(u,v.role,v.status))return 'At least one active administrator is required.';
+        Object.assign(u,{name:v.name,username:v.username,role:v.role,status:v.status},linkIds(v));commit('Updated user '+u.username);draw();toast('User updated')}})},
+      reset(){openForm({title:'Reset password for '+u.username,fields:[pwField],onSave(v){hashPw(v.password).then(h=>{u.hash=h;commit('Reset password for '+u.username);toast('Password updated')})}})},
+      toggle(){
+        const next=u.status==='Active'?'Disabled':'Active';
+        if(u.id===me.id)return toast('You cannot disable your own account.','err');
+        if(lastAdmin(u,u.role,next))return toast('At least one active administrator is required.','err');
+        u.status=next;commit((next==='Active'?'Enabled ':'Disabled ')+'user '+u.username);draw();toast('User '+next.toLowerCase());
+      },
+      del(){
+        if(u.id===me.id)return toast('You cannot delete your own account.','err');
+        if(lastAdmin(u,'x','x'))return toast('At least one active administrator is required.','err');
+        confirmBox('Delete user?',`The account ${u.username} will be removed.`,'Delete',()=>{db.users=db.users.filter(x=>x.id!==u.id);commit('Deleted user '+u.username);draw();toast('User deleted')})},
+      sample(){confirmBox('Reload sample data?','All teachers, students, enrollments and grades are replaced with the sample set. User accounts are kept.','Replace',()=>{purgeFiles();Object.assign(db,seed());db.sf10=makeHistory();db.messages=[];db.meta.sample=true;addSampleThread();commit('Reloaded sample data');draw();toast('Sample data loaded')})},
+      clear(){confirmBox('Clear all records?','All teachers, students, enrollments and grades are permanently deleted. User accounts are kept.','Clear everything',()=>{purgeFiles();Object.assign(db,{teachers:[],students:[],enrollments:[],grades:{},messages:[],sf10:[]});db.meta.sample=false;commit('Cleared all records');draw();toast('All records cleared')})}
+    })[b.dataset.act]();
+  };
+};
+
+/* ---------- Grades (entry) ---------- */
+MODULES.grades=function(view){
+  const st=ui.grades,sc=teacherScope();
+  if(sc){const gs=scopeGrades(sc);if(!gs.length)return noAssignment(view,'Grades');if(!gs.includes(Number(st.grade)))st.grade=gs[0]}
+  const secs=sc?scopeSections(sc,st.grade):sectionsFor(st.grade);if(!secs.includes(st.section))st.section=secs[0]||'';
+  const subs=sc?scopeSubjects(sc,st.grade,st.section):subjectsFor(st.grade);if(!subs.includes(st.subject))st.subject=subs[0];
+  const rows=st.section?enrolledIn(st.grade,st.section):[],S=sMap();
+  view.innerHTML=pageHead('Grades',(sc?'Showing only the subjects and classes assigned to you. ':'Encode quarterly grades by class and subject. ')+'Grades are whole numbers from 60 to 100.',`<button class="btn" data-act="gsheet"${rows.length?'':' disabled'}>Google Sheets</button><button class="btn" data-act="spoint"${rows.length?'':' disabled'}>SharePoint</button><span id="dirty" class="dirty" hidden>Unsaved changes</span><button class="btn primary" data-act="save"${rows.length?'':' disabled'}>Save grades</button>`)+
+  `<div class="card flush"><div class="toolbar"><select id="gg" data-f="grade" aria-label="Grade level">${gradeOptsList(sc?scopeGrades(sc):GRADES,st.grade)}</select><select id="gs" data-f="section" aria-label="Section">${secs.length?options(secs,st.section):'<option>No sections</option>'}</select><select id="gu" data-f="subject" aria-label="Subject">${options(subs,st.subject)}</select></div>
+  ${rows.length?tableHtml([{t:'#'},{t:'Learner'},{t:'Q1',num:1},{t:'Q2',num:1},{t:'Q3',num:1},{t:'Final',num:1},{t:'Remarks'}],rows.map((e,i)=>{
+      const g=getG(e.id,st.subject);
+      return `<tr data-row="${e.id}"><td>${i+1}</td><td><b>${esc(fullName(S[e.studentId]))}</b></td>${g.map((v,q)=>`<td class="num"><input class="grade-in" inputmode="numeric" maxlength="3" data-q="${q}" data-r="${i}" value="${v==null?'':v}" aria-label="${esc(S[e.studentId].first)} quarter ${q+1}"></td>`).join('')}<td class="num fin"></td><td class="rem"></td></tr>`}),
+      `<tfoot><tr><td></td><td>Class average</td><td class="num" data-avg="0"></td><td class="num" data-avg="1"></td><td class="num" data-avg="2"></td><td class="num" data-avg="f"></td><td></td></tr></tfoot>`):emptyHtml('No enrolled learners in this class','Confirm enrollments first, then come back to encode grades.')}</div>`;
+  const parse=el=>{const t=el.value.trim();if(t==='')return {v:null,ok:true};if(!/^\d{2,3}$/.test(t))return {v:null,ok:false};const n=Number(t);return {v:n,ok:n>=60&&n<=100}};
+  function recalc(){
+    const cols=[[],[],[]],fins=[];
+    view.querySelectorAll('tr[data-row]').forEach(tr=>{
+      const vals=[];
+      tr.querySelectorAll('.grade-in').forEach((el,q)=>{const p=parse(el);el.classList.toggle('bad',!p.ok);const v=p.ok?p.v:null;vals.push(v);if(v!=null)cols[q].push(v)});
+      const f=finalOf(vals);tr.querySelector('.fin').textContent=f==null?'—':f;tr.querySelector('.fin').classList.toggle('low',f!=null&&f<75);
+      tr.querySelector('.rem').innerHTML=pill(remark(f));if(f!=null)fins.push(f);
+    });
+    view.querySelectorAll('[data-avg]').forEach(td=>{const k=td.dataset.avg;const a=k==='f'?avg(fins):avg(cols[Number(k)]);td.textContent=a==null?'—':a.toFixed(1)});
+  }
+  if(rows.length)recalc();
+  const setDirty=d=>{st.dirty=d;$('#dirty',view).hidden=!d};
+  view.oninput=e=>{if(e.target.classList.contains('grade-in')){recalc();setDirty(true)}};
+  view.onkeydown=e=>{
+    if(e.key==='Enter'&&e.target.classList.contains('grade-in')){e.preventDefault();const nx=view.querySelector(`.grade-in[data-q="${e.target.dataset.q}"][data-r="${Number(e.target.dataset.r)+1}"]`);if(nx){nx.focus();nx.select()}}
+  };
+  view.onchange=e=>{
+    const k=e.target.dataset.f;if(!k)return;
+    const apply=()=>{const v=e.target.value;if(k==='grade'){st.grade=Number(v);st.section='';st.subject=''}else st[k]=v;st.dirty=false;MODULES.grades(view)};
+    if(st.dirty)confirmBox('Discard unsaved grades?','Changing the class will drop the grades you typed but did not save.','Discard',apply,()=>MODULES.grades(view));else apply();
+  };
+  view.onclick=e=>{
+    const b=e.target.closest('[data-act]');if(!b)return;
+    if(b.dataset.act==='gsheet'||b.dataset.act==='spoint'){
+      if(st.dirty){toast('Save your typed grades first, then open the connection.','err');return}
+      openGradesSheets({grade:st.grade,section:st.section,subject:st.subject,rows,onApplied:()=>{st.dirty=false;MODULES.grades(view)}},b.dataset.act==='spoint'?'sharepoint':'google');return;
+    }
+    if(b.dataset.act!=='save')return;
+    const sc2=teacherScope();if(sc2&&!canGrade(sc2,st.grade,st.section,st.subject)){toast('You are not assigned to this subject.','err');return}
+    const bad=view.querySelector('.grade-in.bad');if(bad){toast('Grades must be whole numbers from 60 to 100.','err');bad.focus();return}
+    view.querySelectorAll('tr[data-row]').forEach(tr=>{
+      const eid=tr.dataset.row,vals=[...tr.querySelectorAll('.grade-in')].map(el=>parse(el).v);
+      if(vals.every(v=>v==null)){if(db.grades[eid])delete db.grades[eid][st.subject]}
+      else{db.grades[eid]=db.grades[eid]||{};db.grades[eid][st.subject]=vals}
+    });
+    commit(`Saved ${st.subject} grades for Grade ${st.grade} - ${st.section}`);setDirty(false);toast('Grades saved');
+  };
+};
+
+function reportCardHtml(e,only){
+  const S=sMap();
+      const s=S[e.studentId],part=!!(only&&only.length),subs=part?only:subjectsFor(e.grade);
+      const finals=subs.map(x=>finalOf(getG(e.id,x)));
+      const fga=finals.every(v=>v!=null)?avg(finals):null;
+      const failing=finals.filter(v=>v!=null&&v<75).length;
+      const status=fga==null?'In progress':(failing?'Failed':'Passed all');
+      const row=x=>{const g=getG(e.id,x),f=finalOf(g);return `<tr><td>${esc(x)}</td>${g.map(v=>`<td class="num${v!=null&&v<75?' low':''}">${v==null?'—':v}</td>`).join('')}<td class="num${f!=null&&f<75?' low':''}"><b>${f==null?'—':f}</b></td><td>${pill(remark(f))}</td></tr>`};
+      const qga=[0,1,2].map(q=>gaFor(e,String(q+1)));
+      return `<div class="card flush"><div class="rc-head"><div><h2>${esc(fullName(s))}</h2><small>LRN ${esc(s.lrn)}</small></div><dl><dt>Grade & section</dt><dd>Grade ${e.grade} - ${esc(e.section)}</dd><dt>School year</dt><dd>${SY}</dd><dt>Adviser</dt><dd>${esc(adviserOf(e))}</dd></dl></div>
+      ${tableHtml([{t:'Learning area'},{t:'Q1',num:1},{t:'Q2',num:1},{t:'Q3',num:1},{t:'Final',num:1},{t:'Remarks'}],subs.map(row),part?'':`<tfoot><tr><td>General average</td>${qga.map(v=>`<td class="num">${v==null?'—':v.toFixed(2)}</td>`).join('')}<td class="num">${f2(fga)}</td><td></td></tr></tfoot>`)}
+      ${part?`<p style="padding:12px 16px;color:var(--muted)">Showing only the subject${subs.length>1?'s':''} assigned to you. The general average and promotion result are for the adviser and the school office.</p>`:`<div class="rc-sum"><div><small>Final general average</small><b>${f2(fga)}</b></div><div><small>Descriptor</small><b style="font-size:16px">${fga==null?'Pending Q3':esc(descriptor(fga))}</b></div><div><small>Result</small><b style="font-size:16px">${pill(status)}</b></div></div>`}</div>`;
+}
+/* ---------- Grades viewing ---------- */
+MODULES['grades-viewing']=function(view){
+  const st=ui.gv,S=sMap(),sc=teacherScope();
+  if(sc&&!scopeGrades(sc).length)return noAssignment(view,'Grades Viewing');
+  view.innerHTML=pageHead('Grades Viewing','Look up a learner report card or a whole class record',`<button class="btn" data-act="gsheet">Google Sheets</button>`)+
+  `<div class="tabs" role="tablist"><button role="tab" data-tab="learner" class="${st.tab==='learner'?'on':''}">Learner report card</button><button role="tab" data-tab="class" class="${st.tab==='class'?'on':''}">Class record</button></div><div id="pane"></div>`;
+  const pane=$('#pane',view);
+  function learnerPane(){
+    const all=curEnr().filter(e=>e.status==='Enrolled'&&S[e.studentId]&&(!sc||scopeSubjects(sc,e.grade,e.section).length)).sort((a,b)=>byName(S[a.studentId],S[b.studentId]));
+    if(!st.studentId||!all.some(e=>e.studentId===st.studentId))st.studentId=all[0]?all[0].studentId:null;
+    pane.innerHTML=`<div class="split" style="margin-top:16px"><div class="card flush"><div class="toolbar"><input type="search" id="lq" placeholder="Search name or LRN" value="${esc(st.q)}" aria-label="Search learners"></div><div class="picklist" id="picks"></div></div><div id="card"></div></div>`;
+    const picks=()=>{
+      const q=st.q.toLowerCase();const l=all.filter(e=>!q||(S[e.studentId].lrn+' '+fullName(S[e.studentId])).toLowerCase().includes(q)).slice(0,40);
+      $('#picks',pane).innerHTML=l.length?l.map(e=>`<button data-pick="${e.studentId}" class="${e.studentId===st.studentId?'on':''}"><b>${esc(fullName(S[e.studentId]))}</b><small>Grade ${e.grade} - ${esc(e.section)}</small></button>`).join(''):emptyHtml('No match');
+    };
+    const card=()=>{
+      const e=all.find(x=>x.studentId===st.studentId);
+      if(!e){$('#card',pane).innerHTML=`<div class="card">${emptyHtml('No enrolled learners yet','Enroll learners to see their report cards.')}</div>`;return}
+      $('#card',pane).innerHTML=reportCardHtml(e,sc?scopeSubjects(sc,e.grade,e.section):null);
+    };
+    picks();card();
+    pane.oninput=ev=>{if(ev.target.id==='lq'){st.q=ev.target.value;picks()}};
+    pane.onclick=ev=>{const b=ev.target.closest('[data-pick]');if(b){st.studentId=b.dataset.pick;picks();card()}};
+  }
+  function classPane(){
+    if(sc&&!scopeGrades(sc).includes(Number(st.grade)))st.grade=scopeGrades(sc)[0];
+    const secs=sc?scopeSections(sc,st.grade):sectionsFor(st.grade);if(!secs.includes(st.section))st.section=secs[0]||'';
+    const subs=sc?scopeSubjects(sc,st.grade,st.section):subjectsFor(st.grade),list=st.section?enrolledIn(st.grade,st.section):[];
+    const data=list.map(e=>({e,vals:subs.map(x=>gradeFor(e,x,st.quarter)),ga:gaFor(e,st.quarter)}));
+    const ranked=data.filter(d=>d.ga!=null).sort((a,b)=>b.ga-a.ga);const rank=new Map(ranked.map((d,i)=>[d.e.id,i+1]));
+    pane.innerHTML=`<div class="card flush" style="margin-top:16px"><div class="toolbar"><select id="cg" data-f="grade" aria-label="Grade level">${gradeOptsList(sc?scopeGrades(sc):GRADES,st.grade)}</select><select id="cs" data-f="section" aria-label="Section">${secs.length?options(secs,st.section):'<option>No sections</option>'}</select><select id="cq" data-f="quarter" aria-label="Period">${options(['1','2','3','final'].map(q=>({v:q,l:QLABEL[q]})),st.quarter)}</select></div>
+    ${data.length?tableHtml([{t:'#'},{t:'Learner'}].concat(subs.map(x=>({t:esc(x),num:1}))).concat(sc?[]:[{t:'General avg.',num:1},{t:'Rank',num:1}]),data.map((d,i)=>`<tr><td>${i+1}</td><td><b>${esc(fullName(S[d.e.studentId]))}</b></td>${d.vals.map(v=>`<td class="num${v!=null&&v<75?' low':''}">${v==null?'—':v}</td>`).join('')}${sc?'':`<td class="num"><b>${f2(d.ga)}</b></td><td class="num">${rank.get(d.e.id)||'—'}</td>`}</tr>`),`<tfoot><tr><td></td><td>Class average</td>${subs.map((x,i)=>{const a=avg(data.map(d=>d.vals[i]));return `<td class="num">${a==null?'—':a.toFixed(1)}</td>`}).join('')}${sc?'':`<td class="num">${f2(avg(data.map(d=>d.ga)))}</td><td></td>`}</tr></tfoot>`):emptyHtml('No enrolled learners in this class')}</div>`;
+    pane.onchange=ev=>{const k=ev.target.dataset.f;if(!k)return;if(k==='grade'){st.grade=Number(ev.target.value);st.section=''}else st[k]=ev.target.value;classPane()};
+    pane.onclick=null;pane.oninput=null;
+  }
+  function classSheet(){
+    const secs=sc?scopeSections(sc,st.grade):sectionsFor(st.grade),sec=secs.includes(st.section)?st.section:secs[0];
+    if(!sec)return null;
+    const subs=sc?scopeSubjects(sc,st.grade,sec):subjectsFor(st.grade),list=enrolledIn(st.grade,sec);
+    const head=['LRN','Learner'].concat(subs,sc?[]:['General average']);
+    const rows=list.map(e=>{const s=S[e.studentId];return [s.lrn,fullName(s)].concat(subs.map(x=>{const v=gradeFor(e,x,st.quarter);return v==null?'':v}),sc?[]:[f2(gaFor(e,st.quarter)).replace('—','')])});
+    return {title:'Grade '+st.grade+' - '+sec+' · '+QLABEL[st.quarter],head,rows,base:'class-record_g'+st.grade+'-'+slug(sec)+'_'+st.quarter,module:'Grades Viewing'};
+  }
+  function learnerSheet(){
+    const e=curEnr().find(x=>x.studentId===st.studentId&&x.status==='Enrolled'),s=e&&S[e.studentId];
+    if(!e||!s)return null;
+    const subs=sc?scopeSubjects(sc,e.grade,e.section):subjectsFor(e.grade);
+    const rows=subs.map(x=>{const g=getG(e.id,x),f=finalOf(g);return [x,g[0]??'',g[1]??'',g[2]??'',f??'',remark(f)]});
+    if(!sc){const ga=finalGA(e);rows.push(['General average','','','',ga==null?'':ga.toFixed(2),''])}
+    return {title:fullName(s)+' · Grade '+e.grade+' - '+e.section,head:['Learning area','Q1','Q2','Q3','Final','Remarks'],rows,base:'report-card_'+slug(s.last+'-'+s.first),module:'Grades Viewing'};
+  }
+  view.onclick=ev=>{
+    if(!ev.target.closest('[data-act="gsheet"]'))return;
+    const o=st.tab==='learner'?learnerSheet():classSheet();
+    if(!o||!o.rows.length)return toast('There is nothing to send yet.','err');
+    openSheetExport(o);
+  };
+  const draw=()=>st.tab==='learner'?learnerPane():classPane();
+  draw();
+  view.querySelector('.tabs').onclick=e=>{const b=e.target.closest('[data-tab]');if(!b)return;st.tab=b.dataset.tab;view.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));pane.onchange=null;draw()};
+};
+
+/* ---------- Reports ---------- */
+const REPORTS=[
+  {id:'masterlist',name:'Class masterlist',desc:'Learners per grade and section',params:['grade','section']},
+  {id:'enrollment',name:'Enrollment summary',desc:'Counts per grade level by sex and status',params:[]},
+  {id:'classgrades',name:'Class grade sheet',desc:'Subject grades and general average',params:['grade','section','quarter']},
+  {id:'honors',name:'Honor roll',desc:'General average of 90 and above',params:['grade','quarter']},
+  {id:'atrisk',name:'Learners below passing',desc:'Subjects graded under 75',params:['grade','quarter']},
+  {id:'teachers',name:'Teacher roster',desc:'Faculty list and advisory classes',params:[]}
+];
+function buildReport(id,p){
+  const S=sMap();const gl=p.grade==='all'?GRADES:[Number(p.grade)];
+  if(id==='masterlist'){
+    const l=enrolledIn(p.grade,p.section);
+    return {title:`Class masterlist · Grade ${p.grade}${p.section==='all'?'':' - '+p.section}`,cols:['No.','LRN','Learner','Section','Sex','Birthdate','Age','Parent / guardian','Contact'],rows:l.map((e,i)=>{const s=S[e.studentId];return [i+1,s.lrn,fullName(s),e.section,s.sex,s.birth,age(s.birth),s.guardian||'',s.phone||'']})};
+  }
+  if(id==='enrollment'){
+    const E=curEnr().filter(e=>S[e.studentId]);const rows=GRADES.map(g=>{
+      const en=E.filter(e=>e.grade===g&&e.status==='Enrolled');const m=en.filter(e=>S[e.studentId].sex==='M').length,f=en.length-m;
+      return [`Grade ${g}`,m,f,en.length,E.filter(e=>e.grade===g&&e.status==='Pending').length,E.filter(e=>e.grade===g&&(e.status==='Dropped'||e.status==='Transferred out')).length]});
+    const tot=[ 'Total',...[1,2,3,4,5].map(i=>rows.reduce((a,r)=>a+r[i],0))];
+    return {title:`Enrollment summary · SY ${SY}`,cols:['Grade level','Male','Female','Enrolled','Pending','Dropped / transferred'],rows:rows.concat([tot])};
+  }
+  if(id==='classgrades'){
+    const subs=subjectsFor(p.grade),l=enrolledIn(p.grade,p.section);
+    return {title:`Class grade sheet · Grade ${p.grade}${p.section==='all'?'':' - '+p.section} · ${QLABEL[p.quarter]}`,cols:['No.','Learner'].concat(subs).concat(['General average','Remarks']),
+      rows:l.map((e,i)=>{const ga=gaFor(e,p.quarter);return [i+1,fullName(S[e.studentId])].concat(subs.map(x=>{const v=gradeFor(e,x,p.quarter);return v==null?'':v})).concat([ga==null?'':ga.toFixed(2),ga==null?'Incomplete':(subs.some(x=>gradeFor(e,x,p.quarter)<75)?'Has failing grade':'Passed')])})};
+  }
+  if(id==='honors'){
+    const rows=[];
+    gl.forEach(g=>{
+      const l=enrolledIn(g,'all').map(e=>({e,ga:gaFor(e,p.quarter)})).filter(d=>d.ga!=null&&d.ga>=90).sort((a,b)=>b.ga-a.ga);
+      l.forEach((d,i)=>rows.push([`Grade ${g}`,i+1,fullName(S[d.e.studentId]),d.e.section,d.ga.toFixed(2),d.ga>=98?'With Highest Honors':d.ga>=95?'With High Honors':'With Honors']));
+    });
+    return {title:`Honor roll · ${p.grade==='all'?'All grades':'Grade '+p.grade} · ${QLABEL[p.quarter]}`,cols:['Grade level','Rank','Learner','Section','General average','Honors'],rows};
+  }
+  if(id==='atrisk'){
+    const rows=[];
+    gl.forEach(g=>enrolledIn(g,'all').forEach(e=>{
+      const bad=subjectsFor(g).map(x=>({x,v:gradeFor(e,x,p.quarter)})).filter(d=>d.v!=null&&d.v<75);
+      if(bad.length)rows.push([`Grade ${g}`,e.section,fullName(S[e.studentId]),bad.length,bad.map(d=>d.x+' ('+d.v+')').join('; ')]);
+    }));
+    return {title:`Learners below passing · ${p.grade==='all'?'All grades':'Grade '+p.grade} · ${QLABEL[p.quarter]}`,cols:['Grade level','Section','Learner','Subjects below 75','Details'],rows};
+  }
+  return {title:'Teacher roster',cols:['Emp. no.','Teacher','Department','Position','Advisory','Email','Contact','Status'],rows:db.teachers.slice().sort(byName).map(t=>[t.empNo,fullName(t),t.dept,t.position,t.advisory||'',t.email||'',t.phone||'',t.status])};
+}
+const csvCell=v=>{const s=String(v==null?'':v);return /[",\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s};
+MODULES.reports=function(view){
+  const st=ui.reports;
+  view.innerHTML=pageHead('Reports','Pick a report, set its filters and copy the table as CSV for a spreadsheet')+
+  `<div class="reports"><div class="rlist" id="rl">${REPORTS.map(r=>`<button data-r="${r.id}" class="${r.id===st.type?'on':''}"><b>${esc(r.name)}</b><small>${esc(r.desc)}</small></button>`).join('')}</div><div class="card flush" id="rp"></div></div>`;
+  function draw(){
+    const def=REPORTS.find(r=>r.id===st.type);
+    const gradeSel=def.params.includes('grade');
+    if(gradeSel&&st.grade==='all'&&!['honors','atrisk'].includes(st.type))st.grade='7';
+    const secs=['all'].concat(sectionsFor(st.grade==='all'?7:st.grade));
+    if(def.params.includes('section')&&!secs.includes(st.section))st.section='all';
+    const rep=buildReport(st.type,st);
+    const showAll=['honors','atrisk'].includes(st.type);
+    $('#rp',view).innerHTML=`<div class="params">${gradeSel?`<label>Grade level<select data-p="grade">${(showAll?'<option value="all"'+(st.grade==='all'?' selected':'')+'>All grades</option>':'')+GRADES.map(g=>`<option value="${g}"${String(g)===st.grade?' selected':''}>Grade ${g}</option>`).join('')}</select></label>`:''}
+      ${def.params.includes('section')?`<label>Section<select data-p="section">${secs.map(s=>`<option value="${esc(s)}"${s===st.section?' selected':''}>${s==='all'?'All sections':esc(s)}</option>`).join('')}</select></label>`:''}
+      ${def.params.includes('quarter')?`<label>Period<select data-p="quarter">${['1','2','3','final'].map(q=>`<option value="${q}"${q===st.quarter?' selected':''}>${QLABEL[q]}</option>`).join('')}</select></label>`:''}
+      <button class="btn grow" data-act="copy"${rep.rows.length?'':' disabled'}>Copy as CSV</button></div>
+      <div class="rhead"><h2>${esc(rep.title)}</h2><small>${rep.rows.length} row${rep.rows.length===1?'':'s'}</small></div>
+      ${rep.rows.length?tableHtml(rep.cols.map(c=>({t:esc(c)})),rep.rows.slice(0,300).map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`)):emptyHtml('Nothing to report','No records match these filters yet.')}`;
+    $('#rp',view).onclick=e=>{if(e.target.closest('[data-act="copy"]')){copyText([rep.cols].concat(rep.rows).map(r=>r.map(csvCell).join(',')).join('\r\n'),'CSV')}};
+    $('#rp',view).onchange=e=>{const k=e.target.dataset.p;if(!k)return;st[k]=e.target.value;if(k==='grade')st.section='all';draw()};
+  }
+  draw();
+  $('#rl',view).onclick=e=>{const b=e.target.closest('[data-r]');if(!b)return;st.type=b.dataset.r;view.querySelectorAll('#rl button').forEach(x=>x.classList.toggle('on',x===b));draw()};
+};
+
+/* ---------- Student & parent portal: home, grades, profile, messages ---------- */
+function unreadCount(u){
+  if(!db.messages)return 0;
+  const mine=db.messages.filter(t=>u.role==='Teacher'?(u.teacherId&&t.teacherId===u.teacherId):(FAMILY.includes(u.role)&&u.studentId&&t.studentId===u.studentId));
+  return mine.filter(t=>t.messages.some(m=>m.authorId!==u.id&&m.t>((t.reads||{})[u.id]||0))).length;
+}
+function refreshBadge(){
+  const u=getUser(),a=$('.side a[href="#messages"]');if(!u||!a)return;
+  const n=unreadCount(u);let b=a.querySelector('.badge');
+  if(n){if(!b){b=document.createElement('span');b.className='badge';a.appendChild(b)}b.textContent=n}else if(b)b.remove();
+}
+const familyEnr=u=>u.studentId?(curEnr().find(x=>x.studentId===u.studentId&&x.status==='Enrolled')||null):null;
+function adviserFor(studentId){
+  const e=curEnr().find(x=>x.studentId===studentId&&x.status==='Enrolled');
+  return e?(db.teachers.find(t=>t.advisory===e.grade+'-'+e.section)||null):null;
+}
+function noLearner(view,title){
+  view.innerHTML=pageHead(title,'')+`<div class="card">${emptyHtml('No learner linked to this account','Ask the school administrator to link your account to a learner in Users.')}</div>`;
+}
+function familyHome(view){
+  const u=getUser(),S=sMap(),s=S[u.studentId];
+  if(!s)return noLearner(view,'Dashboard');
+  const e=familyEnr(u);
+  let lq=null;if(e)for(let q=3;q>=1;q--){if(subjectsFor(e.grade).some(x=>getG(e.id,x)[q-1]!=null)){lq=q;break}}
+  const ga=lq?gaFor(e,String(lq)):null,nU=unreadCount(u),adv=e?adviserOf(e):'—';
+  view.innerHTML=pageHead('Hello, '+u.name.split(' ')[0],`${fullName(s)} · school year ${SY}`)+
+  `<div class="tiles">
+    <div class="tile"><span>Grade & section</span><b>${e?'Grade '+e.grade:'—'}</b><small>${e?esc(e.section):'Not enrolled this school year'}</small></div>
+    <div class="tile"><span>Adviser</span><b style="font-size:20px;padding-top:6px">${esc(adv)}</b></div>
+    <div class="tile"><span>General average</span><b>${ga==null?'—':ga.toFixed(2)}</b><small>${lq?QLABEL[lq]:'No grades yet'}</small></div>
+    <div class="tile"><span>Unread messages</span><b>${nU}</b><small>${nU?'From your adviser':'You are up to date'}</small></div>
+  </div>
+  <div class="two"><section class="card flush"><div class="rhead"><h2>${lq?QLABEL[lq]+' grades':'Latest grades'}</h2><button class="btn sm" data-go="my-grades">Full report card</button></div>
+  ${lq?tableHtml([{t:'Learning area'},{t:'Grade',num:1},{t:'Remarks'}],subjectsFor(e.grade).map(x=>{const v=getG(e.id,x)[lq-1];return `<tr><td>${esc(x)}</td><td class="num${v!=null&&v<75?' low':''}">${v==null?'—':v}</td><td>${pill(v==null?'Incomplete':v>=75?'Passed':'Failed')}</td></tr>`})):emptyHtml('No grades yet','Grades appear here after your teachers encode them.')}</section>
+  <section class="card"><h2>Quick actions</h2><div class="quick"><button class="btn primary" data-go="my-grades">View report card</button><button class="btn" data-go="messages">Message adviser</button><button class="btn" data-go="profile">My profile</button></div></section></div>`;
+  view.onclick=ev=>{const b=ev.target.closest('[data-go]');if(b)location.hash=b.dataset.go};
+}
+MODULES['my-grades']=function(view){
+  const u=getUser(),s=sMap()[u.studentId],e=familyEnr(u),title=u.role==='Parent'?'Learner Grades':'My Grades';
+  if(!s)return noLearner(view,title);
+  view.innerHTML=pageHead(title,`${fullName(s)} · school year ${SY}`)+(e?`<div id="card"></div><p><small>Grades below 75 are shown in red. The final grade is the average of the three quarters.</small></p>`:`<div class="card">${emptyHtml('Not enrolled this school year','Grades appear here once the registrar confirms the enrollment.')}</div>`);
+  if(e)$('#card',view).innerHTML=reportCardHtml(e);
+};
+MODULES.profile=function(view){
+  const u=getUser(),s=sMap()[u.studentId],e=familyEnr(u),t=db.teachers.find(x=>x.id===u.teacherId);
+  const kv=rows=>`<dl class="kv">${rows.map(r=>`<dt>${esc(r[0])}</dt><dd>${r[1]===''||r[1]==null?'—':esc(r[1])}</dd>`).join('')}</dl>`;
+  let right='';
+  if(FAMILY.includes(u.role)){
+    right=s?`<section class="card"><h2>Learner</h2>${kv([['Name',fullName(s)],['LRN',s.lrn],['Sex',s.sex==='M'?'Male':'Female'],['Birthdate',s.birth+' ('+age(s.birth)+' yrs)'],['Grade & section',e?'Grade '+e.grade+' - '+e.section:'Not enrolled'],['Adviser',e?adviserOf(e):'—'],['Parent / guardian',s.guardian],['Contact no.',s.phone],['Address',s.address]])}<div class="quick"><button class="btn" data-act="contact">Update contact details</button></div></section>`:`<section class="card"><h2>Learner</h2>${emptyHtml('No learner linked','Ask the school administrator to link this account in Users.')}</section>`;
+  }else if(u.role==='Teacher'){
+    right=t?`<section class="card"><h2>Teacher record</h2>${kv([['Employee no.',t.empNo],['Department',t.dept],['Position',t.position],['Advisory class',t.advisory],['Assigned subjects',assignText(t)],['Email',t.email],['Contact no.',t.phone]])}<div class="quick"><button class="btn" data-act="tcontact">Update contact details</button></div></section>`:`<section class="card"><h2>Teacher record</h2>${emptyHtml('Not linked to a teacher record','An administrator can link it in Users so you can receive adviser messages.')}</section>`;
+  }
+  view.innerHTML=pageHead('My Profile','Your account and contact details')+`<div class="two"><section class="card"><h2>Account</h2>${kv([['Name',u.name],['Username',u.username],['Role',u.role],['Last sign-in',u.last?fmtDate(u.last):'']])}<div class="quick"><button class="btn" data-act="name">Edit name</button><button class="btn" data-act="pw">Change password</button></div></section>${right}</div>`;
+  view.onclick=ev=>{
+    const b=ev.target.closest('[data-act]');if(!b)return;
+    ({
+      name(){openForm({title:'Edit name',fields:[{key:'name',label:'Full name',required:true,full:true}],values:u,onSave(v){u.name=v.name;commit('Updated own profile');render();toast('Name updated')}})},
+      pw(){openForm({title:'Change password',fields:[
+        {key:'cur',label:'Current password',type:'password',required:true,full:true},
+        {key:'next',label:'New password',type:'password',required:true,full:true,hint:'At least 6 characters.',validate:v=>v.length<6?'New password must be at least 6 characters.':''},
+        {key:'again',label:'Confirm new password',type:'password',required:true,full:true}],
+        async onSave(v){
+          if(await hashPw(v.cur)!==u.hash)return 'Current password is incorrect.';
+          if(v.next!==v.again)return 'The new passwords do not match.';
+          u.hash=await hashPw(v.next);commit('Changed own password');toast('Password changed');
+        }})},
+      contact(){openForm({title:'Update contact details',fields:[{key:'guardian',label:'Parent / guardian',full:true},{key:'phone',label:'Contact no.'},{key:'address',label:'Address',full:true}],values:s,onSave(v){Object.assign(s,v);commit('Updated contact details of '+s.first+' '+s.last);MODULES.profile(view);toast('Contact details updated')}})},
+      tcontact(){openForm({title:'Update contact details',fields:[{key:'email',label:'Email',type:'email',validate:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)?'':'Enter a valid email address.'},{key:'phone',label:'Contact no.'}],values:t,onSave(v){Object.assign(t,v);commit('Updated own teacher record');MODULES.profile(view);toast('Contact details updated')}})}
+    })[b.dataset.act]();
+  };
+};
+MODULES.messages=function(view){
+  const u=getUser(),S=sMap(),st=ui.msg,isT=u.role==='Teacher',roleLabel=isT?'Adviser':u.role;
+  const mine=()=>db.messages.filter(t=>isT?(u.teacherId&&t.teacherId===u.teacherId):(u.studentId&&t.studentId===u.studentId));
+  const lastT=t=>t.messages[t.messages.length-1].t;
+  const isUnread=t=>t.messages.some(m=>m.authorId!==u.id&&m.t>((t.reads||{})[u.id]||0));
+  const tName=id=>{const t=db.teachers.find(x=>x.id===id);return t?t.first+' '+t.last:'Adviser'};
+  const who=t=>isT?(S[t.studentId]?fullName(S[t.studentId]):'Learner'):'Adviser '+tName(t.teacherId);
+  const body=s=>esc(s).replace(/\n/g,'<br>');
+  const convHtml=t=>`<div class="card flush"><div class="rc-head"><div><h2>${esc(t.subject)}</h2><small>${esc(isT?'Family of '+who(t):who(t)+' · about '+(S[t.studentId]?fullName(S[t.studentId]):'your learner'))}</small></div></div>
+    <div class="thread" id="thread">${t.messages.map(m=>`<div class="msg${m.authorId===u.id?' me':''}"><div class="mh"><b>${esc(m.authorName)}</b><span class="pill">${esc(m.role)}</span><time>${esc(fmtDate(m.t))}</time></div><p>${body(m.body)}</p></div>`).join('')}</div>
+    <form class="reply" id="reply" novalidate><textarea id="rb" placeholder="Write a reply" aria-label="Reply"></textarea><div class="actions"><button class="btn primary" type="submit">Send reply</button></div></form></div>`;
+  function draw(){
+    const list=mine().sort((a,b)=>lastT(b)-lastT(a));
+    if(!list.some(t=>t.id===st.id))st.id=list[0]?list[0].id:null;
+    const cur=list.find(t=>t.id===st.id);
+    if(cur&&isUnread(cur)){cur.reads=cur.reads||{};cur.reads[u.id]=Date.now();persist();refreshBadge()}
+    view.innerHTML=pageHead('Messages',isT?'Conversations with the families of your advisory class':'Message your adviser about your learner',`<button class="btn primary" data-act="new">${ICON.plus} New message</button>`)+
+    `<div class="split"><div class="card flush">${list.length?`<div class="picklist">${list.map(t=>`<button data-pick="${t.id}" class="${t.id===st.id?'on':''}"><b>${isUnread(t)?'<span class="dot" title="Unread"></span>':''}${esc(t.subject)}</b><small>${esc(who(t))} · ${esc(fmtDate(lastT(t)))}</small></button>`).join('')}</div>`:emptyHtml('No messages yet','Use New message to start a conversation.')}</div><div id="conv">${cur?convHtml(cur):''}</div></div>`;
+    const th=$('#thread',view);if(th)th.scrollTop=th.scrollHeight;
+  }
+  function send(studentId,teacherId,v){
+    const now=Date.now();
+    const th={id:uid('m'),studentId,teacherId,subject:v.subject,reads:{[u.id]:now},messages:[{id:uid('x'),authorId:u.id,authorName:u.name,role:roleLabel,body:v.text,t:now}]};
+    db.messages.push(th);st.id=th.id;persist();toast('Message sent');draw();
+  }
+  function compose(){
+    const subject={key:'subject',label:'Subject',required:true,full:true},text={key:'text',label:'Message',type:'textarea',required:true,full:true};
+    if(isT){
+      const t=db.teachers.find(x=>x.id===u.teacherId);
+      if(!t||!t.advisory)return toast('No advisory class is set on your teacher record.','err');
+      const parts=t.advisory.split('-'),g=parts.shift(),kids=enrolledIn(g,parts.join('-'));
+      if(!kids.length)return toast('No enrolled learners in your advisory class yet.','err');
+      openForm({title:'New message',fields:[{key:'studentId',label:'Learner (the message goes to their family)',type:'select',full:true,options:kids.map(e=>({v:e.studentId,l:fullName(S[e.studentId])}))},subject,text],onSave:v=>{send(v.studentId,t.id,v)}});
+    }else{
+      if(!u.studentId||!S[u.studentId])return toast('This account is not linked to a learner.','err');
+      const t=adviserFor(u.studentId);
+      if(!t)return toast("Your learner's class has no adviser assigned yet. Please ask the school office.",'err');
+      openForm({title:'Message to '+t.first+' '+t.last,fields:[subject,text],onSave:v=>{send(u.studentId,t.id,v)}});
+    }
+  }
+  view.onclick=e=>{
+    const p=e.target.closest('[data-pick]');if(p){st.id=p.dataset.pick;draw();return}
+    if(e.target.closest('[data-act="new"]'))compose();
+  };
+  view.onsubmit=e=>{
+    if(e.target.id!=='reply')return;e.preventDefault();
+    const t=db.messages.find(x=>x.id===st.id),ta=$('#rb',view),txt=ta.value.trim();
+    if(!t)return;
+    if(!txt){toast('Write a message first.','err');ta.focus();return}
+    t.messages.push({id:uid('x'),authorId:u.id,authorName:u.name,role:roleLabel,body:txt,t:Date.now()});
+    t.reads=t.reads||{};t.reads[u.id]=Date.now();persist();toast('Message sent');draw();
+  };
+  draw();
+};
+
+/* ---------- Shared: school name, saving files, CSV ---------- */
+const SCHOOL='GEBPSOICS';
+const dateISO=t=>{const d=new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const toCSV=rows=>rows.map(r=>r.map(csvCell).join(',')).join('\r\n');
+const slug=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'file';
+async function saveFile(name,text,mime,label){
+  let d=null;
+  try{if(window.claude&&window.claude.use)d=await window.claude.use('downloads')}catch(e){d=null}
+  if(d){
+    try{await d.save({filename:name,data:text});toast('Saved '+name);return true}
+    catch(e){
+      if(e&&e.code==='declined'){toast('Download cancelled');return false}
+      toast('Saving a file is not available here. Use Copy instead.','err');return false;
+    }
+  }
+  try{
+    const b=new Blob([text],{type:mime+';charset=utf-8'}),url=URL.createObjectURL(b),a=document.createElement('a');
+    a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),3000);toast('Download requested: '+name);return true;
+  }catch(e){copyText(text,label||name);return false}
+}
+function parseCSV(text,delim){
+  const D=delim||',';
+  const rows=[];let row=[],cur='',q=false;
+  text=text.replace(/^﻿/,'');
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){cur+='"';i++}else q=false}else cur+=c}
+    else if(c==='"')q=true;
+    else if(c===D){row.push(cur);cur=''}
+    else if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cur);cur='';rows.push(row);row=[]}
+    else cur+=c;
+  }
+  if(cur!==''||row.length){row.push(cur);rows.push(row)}
+  return rows.filter(r=>r.some(x=>x.trim()!==''));
+}
+
+/* ---------- SF10 data helpers ---------- */
+function makeHistory(){
+  const r=rng(99),out=[],S=sMap();
+  db.enrollments.filter(e=>e.sy===SY&&e.status==='Enrolled'&&S[e.studentId]).forEach((e,i)=>{
+    if(i%9===4)return;
+    const pg=e.grade-1;if(pg<1)return;
+    const elem=pg<=6,ab=78+r()*14;
+    subjectsFor(pg).forEach(sub=>{
+      const q=[0,1,2].map(()=>Math.max(68,Math.min(99,Math.round(ab+(r()-.5)*10))));
+      out.push({id:uid('h'),studentId:e.studentId,sy:'2025-2026',grade:pg,section:elem?'':e.section,school:elem?'Sample Elementary School':SCHOOL,schoolId:'',subject:sub,q,final:Math.round(q.reduce((a,b)=>a+b,0)/3)});
+    });
+  });
+  return out;
+}
+function sf10Years(studentId,includeCurrent){
+  if(includeCurrent===undefined)includeCurrent=true;
+  const map=new Map();
+  (db.sf10||[]).filter(r=>r.studentId===studentId).forEach(r=>{
+    const k=r.sy+'|'+r.grade;
+    if(!map.has(k))map.set(k,{sy:r.sy,grade:Number(r.grade),section:r.section||'',school:r.school||'',schoolId:r.schoolId||'',source:'history',subjects:[]});
+    map.get(k).subjects.push({n:r.subject,q:r.q.slice(0,3),final:r.final!=null?r.final:finalOf(r.q)});
+  });
+  const e=includeCurrent?curEnr().find(x=>x.studentId===studentId&&x.status==='Enrolled'):null;
+  if(e){
+    const subs=subjectsFor(e.grade).map(n=>{const q=getG(e.id,n).slice(0,3);return {n,q,final:finalOf(q)}}).filter(x=>x.q.some(v=>v!=null));
+    if(subs.length)map.set(SY+'|'+e.grade,{sy:SY,grade:e.grade,section:e.section,school:SCHOOL,schoolId:'',source:'current',subjects:subs});
+  }
+  const list=[...map.values()].sort((a,b)=>a.sy.localeCompare(b.sy)||a.grade-b.grade);
+  list.forEach(y=>{
+    const fs=y.subjects.map(x=>x.final);
+    y.avg=fs.length&&fs.every(v=>v!=null)?avg(fs):null;
+    y.result=y.avg==null?'Incomplete':(fs.every(v=>v>=75)?'Promoted':'Retained');
+  });
+  return list;
+}
+function flatRows(students,includeCurrent){
+  const out=[];
+  students.forEach(s=>sf10Years(s.id,includeCurrent).forEach(y=>y.subjects.forEach(x=>out.push({lrn:s.lrn,name:fullName(s),sy:y.sy,grade:y.grade,section:y.section,school:y.school,schoolId:y.schoolId,subject:x.n,q:x.q,final:x.final}))));
+  return out;
+}
+const SF10_HEAD=['LRN','Learner','School Year','Grade Level','Section','School','School ID','Learning Area','Q1','Q2','Q3','Final','Remarks'];
+const flatToCsv=rows=>toCSV([SF10_HEAD].concat(rows.map(r=>[r.lrn,r.name,r.sy,r.grade,r.section,r.school,r.schoolId,r.subject,r.q[0]??'',r.q[1]??'',r.q[2]??'',r.final??'',r.final==null?'Incomplete':(r.final>=75?'Passed':'Failed')])));
+const flatToJson=rows=>JSON.stringify({format:'gebpsoics-sf10',version:1,exported:new Date().toISOString(),rows:rows.map(r=>({lrn:r.lrn,sy:r.sy,grade:r.grade,section:r.section,school:r.school,schoolId:r.schoolId,subject:r.subject,q:r.q,final:r.final}))},null,2);
+function sf10Doc(studentId){
+  const s=sMap()[studentId];
+  const doc={title:'SF10 · Learner Permanent Academic Record (Form 137)',meta:[],cols:['School year','Grade','Section','School','Learning area','Q1','Q2','Q3','Final','Remarks'],rows:[],sign:['Prepared by','Certified true and correct (School Head)']};
+  if(!s)return doc;
+  doc.meta=[['Learner',fullName(s)],['LRN',s.lrn],['Sex',s.sex==='M'?'Male':'Female'],['Birthdate',s.birth],['Parent / guardian',s.guardian||'']];
+  sf10Years(studentId).forEach(y=>{
+    y.subjects.forEach(x=>doc.rows.push([y.sy,y.grade,y.section,y.school,x.n,x.q[0]??'',x.q[1]??'',x.q[2]??'',x.final??'',remark(x.final)]));
+    doc.rows.push([y.sy,y.grade,'','','General average','','','',y.avg==null?'':y.avg.toFixed(2),y.result]);
+  });
+  return doc;
+}
+function sf10Validate(text){
+  const t=(text||'').trim();
+  if(!t)return {fatal:'Add a file or paste some data first.'};
+  let rows=[];
+  if(t[0]==='{'||t[0]==='['){
+    try{
+      const j=JSON.parse(t),arr=Array.isArray(j)?j:j.rows;if(!Array.isArray(arr))throw new Error('x');
+      rows=arr.map((x,i)=>({line:i+1,lrn:String(x.lrn||'').trim(),sy:String(x.sy||x.schoolYear||'').trim(),grade:String(x.grade==null?'':x.grade).trim(),section:String(x.section||''),school:String(x.school||''),schoolId:String(x.schoolId||''),subject:String(x.subject||'').trim(),q:[0,1,2].map(k=>x.q&&x.q[k]!=null?String(x.q[k]):''),final:x.final==null?'':String(x.final)}));
+    }catch(e){return {fatal:'This is not valid JSON. Use a file exported from this portal.'}}
+  }else{
+    const t2=parseCSV(t);
+    if(t2.length<2)return {fatal:'The file needs a header row and at least one data row.'};
+    const hdr=t2[0].map(h=>h.toLowerCase().replace(/[^a-z0-9]/g,''));
+    const col=(...n)=>{for(const k of n){const i=hdr.indexOf(k);if(i>=0)return i}return -1};
+    const c={lrn:col('lrn'),sy:col('schoolyear','sy'),grade:col('gradelevel','grade'),section:col('section'),school:col('school','schoolname'),schoolId:col('schoolid'),subject:col('learningarea','subject'),q1:col('q1','1stquarter'),q2:col('q2','2ndquarter'),q3:col('q3','3rdquarter'),final:col('final','finalrating','finalgrade')};
+    const names={lrn:'LRN',sy:'School Year',grade:'Grade Level',subject:'Learning Area'};
+    const miss=Object.keys(names).filter(k=>c[k]<0);
+    if(miss.length)return {fatal:'Missing column: '+miss.map(k=>names[k]).join(', ')+'.'};
+    const g=(r,i)=>i<0?'':(r[i]||'').trim();
+    rows=t2.slice(1).map((r,i)=>({line:i+2,lrn:g(r,c.lrn),sy:g(r,c.sy),grade:g(r,c.grade),section:g(r,c.section),school:g(r,c.school),schoolId:g(r,c.schoolId),subject:g(r,c.subject),q:[g(r,c.q1),g(r,c.q2),g(r,c.q3)],final:g(r,c.final)}));
+  }
+  const byLrn=Object.fromEntries(db.students.map(s=>[s.lrn,s]));
+  const num=v=>{const s=String(v==null?'':v).trim();if(s==='')return {v:null,ok:true};if(!/^\d{2,3}$/.test(s))return {v:null,ok:false};const n=Number(s);return {v:n,ok:n>=60&&n<=100}};
+  const ok=[],errors=[],seen=new Set(),learners=new Set();
+  rows.forEach(r=>{
+    const err=[],s=byLrn[r.lrn];
+    if(!r.lrn)err.push('LRN is blank');else if(!s)err.push('LRN '+r.lrn+' is not in Students');
+    const m=/^(\d{4})-(\d{4})$/.exec(r.sy);
+    if(!m||Number(m[2])!==Number(m[1])+1)err.push('School year must look like 2024-2025');
+    else if(r.sy===SY)err.push('School year '+SY+' is kept in the live records. Import earlier years only');
+    const gr=/^\d{1,2}$/.test(r.grade)?Number(r.grade):0;
+    if(gr<1||gr>12)err.push('Grade level must be 1 to 12');
+    if(!r.subject)err.push('Learning area is blank');
+    const qs=r.q.map(num),fin=num(r.final);
+    if(qs.some(x=>!x.ok)||!fin.ok)err.push('Grades must be whole numbers from 60 to 100');
+    else if(qs.every(x=>x.v==null)&&fin.v==null)err.push('No grades given');
+    if(!err.length){
+      const key=s.id+'|'+r.sy+'|'+gr+'|'+r.subject.toLowerCase();
+      if(seen.has(key))err.push('Duplicate of an earlier row for the same learner, year, grade and learning area');else seen.add(key);
+    }
+    if(err.length){errors.push({line:r.line,msg:err.join('; ')});return}
+    const q=qs.map(x=>x.v);
+    ok.push({studentId:s.id,sy:r.sy,grade:gr,section:r.section,school:r.school,schoolId:r.schoolId,subject:r.subject,q,final:fin.v!=null?fin.v:(q.every(v=>v!=null)?Math.round(q.reduce((a,b)=>a+b,0)/3):null)});
+    learners.add(s.id);
+  });
+  return {ok,errors,total:rows.length,learners:learners.size};
+}
+
+/* ---------- Audit trail ---------- */
+MODULES.audit=function(view){
+  const st=ui.audit,all=db.audit||[],now=Date.now(),wk=now-7*864e5,today=dateISO(now);
+  const uniq=f=>[...new Set(all.map(f).filter(Boolean))].sort();
+  view.innerHTML=pageHead('Audit Trail','Who did what and when. Entries cannot be edited or deleted from the portal.',`<button class="btn" data-act="export">Export filtered CSV</button>`)+
+  `<div class="tiles">
+    <div class="tile"><span>Events today</span><b>${all.filter(a=>dateISO(a.t)===today).length}</b><small>${all.length} stored in total</small></div>
+    <div class="tile"><span>Sign-ins, 7 days</span><b>${all.filter(a=>a.action==='Login'&&a.t>=wk).length}</b></div>
+    <div class="tile"><span>Failed sign-ins, 7 days</span><b>${all.filter(a=>a.action==='Login failed'&&a.t>=wk).length}</b></div>
+    <div class="tile"><span>Deletions, 7 days</span><b>${all.filter(a=>a.action==='Delete'&&a.t>=wk).length}</b></div>
+  </div>
+  <div class="card flush"><div class="toolbar"><input type="search" id="aq" placeholder="Search details or user" value="${esc(st.q)}" aria-label="Search audit trail">
+    <select id="am" aria-label="Module"><option value="">All modules</option>${options(uniq(a=>a.module),st.module)}</select>
+    <select id="aa" aria-label="Action"><option value="">All actions</option>${options(uniq(a=>a.action),st.action)}</select>
+    <select id="au" aria-label="User"><option value="">All users</option>${options(uniq(a=>a.who),st.user)}</select>
+    <input type="date" id="af" value="${esc(st.from)}" aria-label="From date"><input type="date" id="at" value="${esc(st.to)}" aria-label="To date"></div><div id="list"></div></div>`;
+  const filtered=()=>{const q=st.q.toLowerCase();return all.filter(a=>(!st.module||a.module===st.module)&&(!st.action||a.action===st.action)&&(!st.user||a.who===st.user)&&(!st.from||dateISO(a.t)>=st.from)&&(!st.to||dateISO(a.t)<=st.to)&&(!q||(a.detail+' '+a.who).toLowerCase().includes(q)))};
+  function list(){
+    const p=paginate(filtered(),st.page,20);st.page=p.page;
+    $('#list',view).innerHTML=p.total?tableHtml([{t:'Time'},{t:'User'},{t:'Action'},{t:'Module'},{t:'Details'}],p.items.map(a=>`<tr><td style="white-space:nowrap">${esc(fmtDate(a.t))}</td><td><b>${esc(a.who)}</b>${a.role?`<small>${esc(a.role)}</small>`:''}</td><td>${pill(a.action)}</td><td>${esc(a.module)}</td><td>${esc(a.detail)}</td></tr>`))+pagerHtml(p):emptyHtml('No matching entries','Change the filters to see more.');
+  }
+  list();
+  view.oninput=e=>{
+    const m={aq:'q',am:'module',aa:'action',au:'user',af:'from',at:'to'}[e.target.id];if(!m)return;
+    st[m]=e.target.value;st.page=1;list();
+  };
+  view.onclick=async e=>{
+    const b=e.target.closest('[data-act]');if(!b)return;
+    if(b.dataset.act==='prev'){st.page--;list()}
+    else if(b.dataset.act==='next'){st.page++;list()}
+    else if(b.dataset.act==='export'){
+      const rows=[['Time','User','Role','Action','Module','Details']].concat(filtered().map(a=>[new Date(a.t).toISOString(),a.who,a.role,a.action,a.module,a.detail]));
+      if(await saveFile('audit-trail_'+todayISO()+'.csv','﻿'+toCSV(rows),'text/csv','audit trail'))commit('Exported audit trail ('+(rows.length-1)+' entries)','Export','Audit Trail');
+    }
+  };
+};
+
+/* ---------- Forms ---------- */
+const learnerEnr=id=>curEnr().find(x=>x.studentId===id&&x.status==='Enrolled')||null;
+const classLabel=p=>'Grade '+p.grade+(p.section==='all'?'':' - '+p.section);
+const adviserLabel=p=>{if(p.section==='all')return '';const t=db.teachers.find(x=>x.advisory===p.grade+'-'+p.section);return t?t.first+' '+t.last:''};
+const classMeta=p=>[['School',SCHOOL],['School year',SY],['Grade level',p.grade],['Section',p.section==='all'?'All sections':p.section],['Adviser',adviserLabel(p)]];
+function finalsOf(e){return subjectsFor(e.grade).map(x=>finalOf(getG(e.id,x)))}
+function finalGA(e){const f=finalsOf(e);return f.every(v=>v!=null)?Math.round(avg(f)*100)/100:null}
+const FORMS=[
+ {id:'sf1',code:'SF1',name:'School Register',param:'class',fill:'Filled from portal',desc:'Learners per class with LRN, sex, birthdate, age, guardian and address.',
+  build:p=>{const S=sMap();return {title:'SF1 · School Register',meta:classMeta(p),cols:['No.','LRN','Name (Last, First Middle)','Sex','Birthdate','Age','Parent / guardian','Contact no.','Address','Remarks'],rows:enrolledIn(p.grade,p.section).map((e,i)=>{const s=S[e.studentId];return [i+1,s.lrn,fullName(s),s.sex,s.birth,age(s.birth),s.guardian||'',s.phone||'',s.address||'',e.type==='Transferee'?'Transferred in':e.type==='Returnee'?'Returnee':'']}),sign:['Prepared by (Adviser)','Certified correct (School Head)']}}},
+ {id:'sf2',code:'SF2',name:'Daily Attendance Report of Learners',param:'class',fill:'Names filled, attendance blank',desc:'Class list with day columns 1 to 31, ready to mark by hand. Attendance is not tracked in the portal.',
+  build:p=>{const S=sMap(),days=Array.from({length:31},(_,i)=>String(i+1));return {title:'SF2 · Daily Attendance Report of Learners',meta:classMeta(p).concat([['Month','']]),cols:['No.','Learner'].concat(days,['Absent','Tardy']),rows:enrolledIn(p.grade,p.section).map((e,i)=>[i+1,fullName(S[e.studentId])].concat(days.map(()=>''),['','']))  ,sign:['Prepared by (Adviser)','Checked by (School Head)']}}},
+ {id:'sf3',code:'SF3',name:'Books Issued and Returned',param:'class',fill:'Names filled, rest blank',desc:'Learner list with columns for the book title, dates issued and returned, and condition.',
+  build:p=>{const S=sMap();return {title:'SF3 · Books Issued and Returned',meta:classMeta(p),cols:['No.','Learner','Learning area','Book title','Date issued','Date returned','Condition','Remarks'],rows:enrolledIn(p.grade,p.section).map((e,i)=>[i+1,fullName(S[e.studentId]),'','','','','','']),sign:['Prepared by (Adviser)','Property custodian']}}},
+ {id:'sf4',code:'SF4',name:"Monthly Learner's Movement and Attendance",param:'none',fill:'Enrollment filled, attendance blank',desc:'Enrollment, dropped and transferred-out counts per grade level. Average daily attendance is left blank.',
+  build:()=>{const S=sMap(),E=curEnr().filter(e=>S[e.studentId]);const row=g=>{const en=E.filter(e=>e.grade===g&&e.status==='Enrolled'),m=en.filter(e=>S[e.studentId].sex==='M').length;return [`Grade ${g}`,m,en.length-m,en.length,E.filter(e=>e.grade===g&&e.status==='Dropped').length,E.filter(e=>e.grade===g&&e.status==='Transferred out').length,'','']};
+   const rows=GRADES.map(row);const tot=['Total'].concat([1,2,3,4,5].map(i=>rows.reduce((a,r)=>a+r[i],0)),['','']);
+   return {title:"SF4 · Monthly Learner's Movement and Attendance",meta:[['School',SCHOOL],['School year',SY],['Month','']],cols:['Grade level','Enrolled (male)','Enrolled (female)','Enrolled (total)','Dropped out','Transferred out','Late enrollees','Average daily attendance'],rows:rows.concat([tot]),sign:['Prepared by','Certified correct (School Head)']}}},
+ {id:'sf5',code:'SF5',name:'Report on Promotion and Level of Proficiency',param:'class',fill:'Filled from portal',desc:'Final general average, descriptor and action taken for each learner in a class.',
+  build:p=>{const S=sMap();return {title:'SF5 · Report on Promotion and Level of Proficiency',meta:classMeta(p),cols:['No.','Learner','General average','Level of proficiency','Action taken'],rows:enrolledIn(p.grade,p.section).map((e,i)=>{const f=finalsOf(e),ga=finalGA(e),bad=f.filter(v=>v!=null&&v<75).length;return [i+1,fullName(S[e.studentId]),ga==null?'':ga.toFixed(2),ga==null?'':descriptor(ga),ga==null?'Incomplete grades':(bad?'Did not meet standard in '+bad+' subject'+(bad>1?'s':''):'Promoted')]}),sign:['Prepared by (Adviser)','Certified correct (School Head)']}}},
+ {id:'sf6',code:'SF6',name:'Summarized Report on Promotion and Level of Proficiency',param:'none',fill:'Filled from portal',desc:'School-wide counts of promoted, retained and proficiency levels per grade level.',
+  build:()=>{const S=sMap(),rows=GRADES.map(g=>{
+     const en=enrolledIn(g,'all'),c={pm:0,pf:0,rm:0,rf:0,inc:0,o:0,vs:0,s:0,fs:0,d:0};
+     en.forEach(e=>{const ga=finalGA(e),m=S[e.studentId].sex==='M';
+       if(ga==null){c.inc++;return}
+       const pass=finalsOf(e).every(v=>v>=75);
+       if(pass)m?c.pm++:c.pf++;else m?c.rm++:c.rf++;
+       if(ga>=90)c.o++;else if(ga>=85)c.vs++;else if(ga>=80)c.s++;else if(ga>=75)c.fs++;else c.d++;});
+     return [`Grade ${g}`,en.length,c.pm,c.pf,c.rm,c.rf,c.inc,c.o,c.vs,c.s,c.fs,c.d]});
+   const tot=['Total'].concat(Array.from({length:11},(_,i)=>rows.reduce((a,r)=>a+r[i+1],0)));
+   return {title:'SF6 · Summarized Report on Promotion and Level of Proficiency',meta:[['School',SCHOOL],['School year',SY]],cols:['Grade level','Enrolled','Promoted (M)','Promoted (F)','Retained (M)','Retained (F)','Incomplete','Outstanding (90-100)','Very satisfactory (85-89)','Satisfactory (80-84)','Fairly satisfactory (75-79)','Did not meet (below 75)'],rows:rows.concat([tot]),sign:['Prepared by','Certified correct (School Head)']}}},
+ {id:'sf7',code:'SF7',name:'School Personnel Assignment List',param:'none',fill:'Filled from portal',desc:'Teaching personnel with position, department, advisory class and contact details.',
+  build:()=>({title:'SF7 · School Personnel Assignment List',meta:[['School',SCHOOL],['School year',SY]],cols:['Emp. no.','Name','Position','Department / subject','Advisory class','Status','Email','Contact no.'],rows:db.teachers.slice().sort(byName).map(t=>[t.empNo,fullName(t),t.position,t.dept,t.advisory||'',t.status,t.email||'',t.phone||'']),sign:['Prepared by','Certified correct (School Head)']})},
+ {id:'sf8',code:'SF8',name:"Learner's Basic Health and Nutrition Report",param:'class',fill:'Names filled, rest blank',desc:'Class list with columns for weight, height, BMI and nutritional status. Health data is not tracked in the portal.',
+  build:p=>{const S=sMap();return {title:"SF8 · Learner's Basic Health and Nutrition Report",meta:classMeta(p).concat([['Date of weighing','']]),cols:['No.','Learner','Sex','Age','Weight (kg)','Height (m)','BMI','Nutritional status','Height for age','Remarks'],rows:enrolledIn(p.grade,p.section).map((e,i)=>{const s=S[e.studentId];return [i+1,fullName(s),s.sex,age(s.birth),'','','','','','']}),sign:['Prepared by (Adviser)','School nurse / health coordinator']}}},
+ {id:'sf9',code:'SF9',name:"Learner's Progress Report Card (Form 138)",param:'learner',fill:'Filled from portal',desc:'Quarterly grades, final grades and general average for one learner.',
+  build:p=>{const s=sMap()[p.studentId],e=learnerEnr(p.studentId);if(!s||!e)return {title:"SF9 · Learner's Progress Report Card",meta:[],cols:[],rows:[]};
+   const subs=subjectsFor(e.grade),qga=[1,2,3].map(q=>gaFor(e,String(q))),ga=finalGA(e);
+   return {title:"SF9 · Learner's Progress Report Card (Form 138)",meta:[['Learner',fullName(s)],['LRN',s.lrn],['Grade & section','Grade '+e.grade+' - '+e.section],['School year',SY],['Adviser',adviserOf(e)]],cols:['Learning area','Q1','Q2','Q3','Final','Remarks'],rows:subs.map(x=>{const g=getG(e.id,x),f=finalOf(g);return [x,g[0]??'',g[1]??'',g[2]??'',f??'',remark(f)]}),foot:['General average'].concat(qga.map(v=>v==null?'':v.toFixed(2)),[ga==null?'':ga.toFixed(2),ga==null?'':descriptor(ga)]),sign:['Adviser','School Head','Parent / guardian']}}},
+ {id:'sf10',code:'SF10',name:"Learner's Permanent Academic Record (Form 137)",param:'student',fill:'Filled from portal and imports',desc:'All school years on record for one learner, including grades imported from previous schools. Use the SF10 Import/Export module to bring in records.',build:p=>sf10Doc(p.studentId)},
+ {id:'enrol',code:'Enrollment',name:'Basic Education Enrollment Form',param:'learner',fill:'Filled from portal',desc:"A learner's personal details and enrollment entry.",
+  build:p=>{const s=sMap()[p.studentId],e=learnerEnr(p.studentId);if(!s||!e)return {title:'Basic Education Enrollment Form',meta:[],cols:[],rows:[]};
+   return {title:'Basic Education Enrollment Form',meta:[['School',SCHOOL],['School year',SY]],cols:['Field','Entry'],rows:[['LRN',s.lrn],['Last name',s.last],['First name',s.first],['Middle name',s.middle||''],['Sex',s.sex==='M'?'Male':'Female'],['Birthdate',s.birth],['Age',age(s.birth)],['Address',s.address||''],['Parent / guardian',s.guardian||''],['Contact no.',s.phone||''],['Grade level to enroll','Grade '+e.grade],['Section',e.section],['Enrollment type',e.type],['Date enrolled',e.date]],sign:['Parent / guardian signature','Received by (Registrar)']}}},
+ {id:'cert',code:'Certificate',name:'Certificate of Enrollment',param:'learner',fill:'Filled from portal',desc:'A one-page certification that a learner is enrolled this school year.',
+  build:p=>{const s=sMap()[p.studentId],e=learnerEnr(p.studentId);if(!s||!e)return {title:'Certificate of Enrollment',meta:[],cols:[],rows:[]};
+   return {title:'Certificate of Enrollment',meta:[['School',SCHOOL]],cols:['Certification'],rows:[[`This is to certify that ${s.first} ${s.middle?s.middle.charAt(0)+'. ':''}${s.last} (LRN ${s.lrn}) is officially enrolled in Grade ${e.grade} - ${e.section} at ${SCHOOL} for school year ${SY}.`],[`Issued on ${new Date().toLocaleDateString('en-PH',{dateStyle:'long'})} upon request for whatever legal purpose it may serve.`]],sign:['School Head']}}}
+];
+function docCsv(d){
+  const out=[[d.title],[SCHOOL]].concat(d.meta.map(m=>[m[0],m[1]]),[[]],[d.cols],d.rows);
+  if(d.foot)out.push(d.foot);
+  if(d.sign){out.push([]);out.push(d.sign.map(s=>'_______________________'));out.push(d.sign)}
+  out.push([],['Generated from the '+SCHOOL+' portal on '+todayISO()+'. Check against the latest DepEd template before submitting.']);
+  return '﻿'+toCSV(out);
+}
+function docHtml(d){
+  const cell=(c,t)=>`<${t}>${esc(c)}</${t}>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(d.title)}</title><style>body{font:12px/1.4 Arial,Helvetica,sans-serif;color:#000;margin:24px}h1{font-size:17px;margin:0;text-align:center}h2{font-size:13px;font-weight:normal;text-align:center;margin:2px 0 14px}.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px 24px;margin-bottom:12px}.meta span{color:#444}table{border-collapse:collapse;width:100%}th,td{border:1px solid #000;padding:3px 6px;text-align:left;vertical-align:top}th{background:#eee}tfoot td{font-weight:bold}.sign{display:flex;gap:48px;margin-top:44px}.sign div{flex:1;border-top:1px solid #000;padding-top:4px;text-align:center}.note{margin-top:22px;color:#555;font-size:10px}@page{size:landscape;margin:12mm}</style></head><body><h1>${esc(d.title)}</h1><h2>${esc(SCHOOL)}</h2><div class="meta">${d.meta.map(m=>`<div><span>${esc(m[0])}:</span> <b>${esc(m[1])}</b></div>`).join('')}</div><table><thead><tr>${d.cols.map(c=>cell(c,'th')).join('')}</tr></thead><tbody>${d.rows.map(r=>`<tr>${r.map(c=>cell(c,'td')).join('')}</tr>`).join('')}</tbody>${d.foot?`<tfoot><tr>${d.foot.map(c=>cell(c,'td')).join('')}</tr></tfoot>`:''}</table>${d.sign?`<div class="sign">${d.sign.map(s=>`<div>${esc(s)}</div>`).join('')}</div>`:''}<p class="note">Generated from the ${esc(SCHOOL)} portal on ${todayISO()}. Check against the latest DepEd template before submitting.</p></body></html>`;
+}
+MODULES.forms=function(view){
+  const st=ui.forms,S=sMap();
+  view.innerHTML=pageHead('Forms','DepEd school forms filled from your portal records')+
+  `<div class="banner"><p>These are DepEd-style layouts generated from portal data, not the official template files. Fields the portal does not record, such as daily attendance and health data, stay blank for you to complete. Check each form against the latest DepEd issuance before you submit it.</p></div>
+  <div class="reports"><div class="rlist" id="fl">${FORMS.map(f=>`<button data-f="${f.id}" class="${f.id===st.id?'on':''}"><b>${esc(f.code)} · ${esc(f.name)}</b><small>${esc(f.fill)}</small></button>`).join('')}</div><div class="card flush" id="fp"></div></div>`;
+  function paramsHtml(def){
+    if(def.param==='class'){
+      const secs=['all'].concat(sectionsFor(st.grade));if(!secs.includes(st.section))st.section=secs[1]||'all';
+      return `<label>Grade level<select data-p="grade">${gradeOpts(st.grade)}</select></label><label>Section<select data-p="section">${secs.map(s=>`<option value="${esc(s)}"${s===st.section?' selected':''}>${s==='all'?'All sections':esc(s)}</option>`).join('')}</select></label>`;
+    }
+    if(def.param==='learner'||def.param==='student'){
+      const list=def.param==='learner'?curEnr().filter(e=>e.status==='Enrolled'&&S[e.studentId]).map(e=>S[e.studentId]):db.students.slice();
+      list.sort(byName);
+      if(!list.some(s=>s.id===st.studentId))st.studentId=list[0]?list[0].id:'';
+      return `<label>Learner<select data-p="studentId">${list.map(s=>{const e=learnerEnr(s.id);return `<option value="${s.id}"${s.id===st.studentId?' selected':''}>${esc(fullName(s))}${e?' · G'+e.grade+'-'+esc(e.section):''}</option>`}).join('')}</select></label>`;
+    }
+    return '';
+  }
+  const docFor=def=>def.build({grade:st.grade,section:st.section,studentId:st.studentId});
+  const slugFor=def=>def.param==='class'?'grade'+st.grade+'-'+st.section:(def.param==='none'?'school':(S[st.studentId]?S[st.studentId].last:'learner'));
+  function draw(){
+    const def=FORMS.find(f=>f.id===st.id)||FORMS[0],ph=paramsHtml(def),d=docFor(def);
+    $('#fp',view).innerHTML=`<div class="rhead"><div><h2>${esc(def.name)}</h2><small>${esc(def.desc)}</small></div></div>
+    <div class="params">${ph}<span class="grow quick"><button class="btn primary" data-act="csv"${d.rows.length?'':' disabled'}>Download CSV</button><button class="btn" data-act="html"${d.rows.length?'':' disabled'}>Download printable HTML</button><button class="btn" data-act="copy"${d.rows.length?'':' disabled'}>Copy CSV</button></span></div>
+    ${d.rows.length?`<div style="padding:12px 16px">${d.meta.length?`<dl class="kv" style="margin:0 0 8px">${d.meta.map(m=>`<dt>${esc(m[0])}</dt><dd>${m[1]===''||m[1]==null?'—':esc(m[1])}</dd>`).join('')}</dl>`:''}</div>
+    ${tableHtml(d.cols.map(c=>({t:esc(c)})),d.rows.slice(0,60).map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`),d.foot?`<tfoot><tr>${d.foot.map(c=>`<td>${esc(c)}</td>`).join('')}</tr></tfoot>`:'')}
+    <div class="pager"><span>${d.rows.length} row${d.rows.length===1?'':'s'}${d.rows.length>60?' · preview shows the first 60, the file has all':''}</span><span>Open the HTML file in a browser to print it or save it as PDF.</span></div>`:emptyHtml('Nothing to show yet',def.param==='class'?'No enrolled learners in this class.':'Pick a learner who is enrolled this school year, or add records first.')}`;
+  }
+  draw();
+  view.onclick=async e=>{
+    const f=e.target.closest('[data-f]');
+    if(f){st.id=f.dataset.f;view.querySelectorAll('#fl button').forEach(x=>x.classList.toggle('on',x===f));draw();return}
+    const b=e.target.closest('[data-act]');if(!b)return;
+    const def=FORMS.find(x=>x.id===st.id)||FORMS[0],d=docFor(def),base=slug(def.code+'-'+slugFor(def))+'_'+todayISO();
+    if(b.dataset.act==='copy')return copyText(docCsv(d).replace(/^﻿/,''),def.code+' CSV');
+    const html=b.dataset.act==='html';
+    if(await saveFile(base+(html?'.html':'.csv'),html?docHtml(d):docCsv(d),html?'text/html':'text/csv',def.code))commit('Exported form '+def.code+' ('+slugFor(def)+')','Export','Forms');
+  };
+  view.onchange=e=>{
+    const k=e.target.dataset.p;if(!k)return;
+    if(k==='grade'){st.grade=Number(e.target.value);st.section=''}else st[k]=e.target.value;draw();
+  };
+};
+
+/* ---------- SF10 import / export ---------- */
+MODULES.sf10=function(view){
+  const st=ui.sf10,S=sMap(),imp=st.imp,ex=st.ex;
+  view.innerHTML=pageHead('SF10 Import/Export','Learner Permanent Academic Record (Form 137): view records, import from previous schools, export for transfers')+
+  `<div class="tabs" role="tablist">${[['records','Learner records'],['import','Import'],['export','Export']].map(t=>`<button role="tab" data-tab="${t[0]}" class="${st.tab===t[0]?'on':''}">${t[1]}</button>`).join('')}</div><div id="pane" style="margin-top:16px"></div>`;
+  const pane=$('#pane',view);
+  const sorted=()=>db.students.slice().sort(byName);
+  function yearsHtml(id){
+    const ys=sf10Years(id);
+    if(!ys.length)return `<div class="card">${emptyHtml('No academic records yet','Import grades from a previous school, or encode grades for this school year.')}</div>`;
+    return `<div style="display:flex;flex-direction:column;gap:12px">${ys.map(y=>`<section class="card flush"><div class="rhead"><div><h3>Grade ${y.grade} · SY ${esc(y.sy)}</h3><small>${esc(y.school||'School not stated')}${y.section?' · '+esc(y.section):''}</small></div><div>${y.source==='current'?'<span class="pill good">Current year</span>':`<span class="pill">Imported</span> <button class="btn sm danger" data-del="${esc(y.sy)}|${y.grade}">Remove</button>`}</div></div>
+      ${tableHtml([{t:'Learning area'},{t:'Q1',num:1},{t:'Q2',num:1},{t:'Q3',num:1},{t:'Final',num:1},{t:'Remarks'}],y.subjects.map(x=>`<tr><td>${esc(x.n)}</td>${x.q.map(v=>`<td class="num${v!=null&&v<75?' low':''}">${v==null?'—':v}</td>`).join('')}<td class="num${x.final!=null&&x.final<75?' low':''}"><b>${x.final==null?'—':x.final}</b></td><td>${pill(remark(x.final))}</td></tr>`),`<tfoot><tr><td>General average</td><td></td><td></td><td></td><td class="num">${y.avg==null?'—':y.avg.toFixed(2)}</td><td>${pill(y.result)}</td></tr></tfoot>`)}</section>`).join('')}</div>`;
+  }
+  function recordsPane(){
+    const all=sorted();if(!st.studentId||!S[st.studentId])st.studentId=all[0]?all[0].id:null;
+    pane.innerHTML=`<div class="split"><div class="card flush"><div class="toolbar"><input type="search" id="rq" placeholder="Search name or LRN" value="${esc(st.q)}" aria-label="Search learners"></div><div class="picklist" id="picks"></div></div><div id="rc"></div></div>`;
+    const picks=()=>{const q=st.q.toLowerCase(),l=all.filter(s=>!q||(s.lrn+' '+fullName(s)).toLowerCase().includes(q)).slice(0,50);$('#picks',pane).innerHTML=l.length?l.map(s=>`<button data-pick="${s.id}" class="${s.id===st.studentId?'on':''}"><b>${esc(fullName(s))}</b><small>LRN ${esc(s.lrn)} · ${sf10Years(s.id).length} year(s) on record</small></button>`).join(''):emptyHtml('No match')};
+    const card=()=>{const s=S[st.studentId];$('#rc',pane).innerHTML=s?`<div class="card flush" style="margin-bottom:12px"><div class="rc-head"><div><h2>${esc(fullName(s))}</h2><small>LRN ${esc(s.lrn)} · ${s.sex==='M'?'Male':'Female'} · born ${esc(s.birth)}</small></div><div class="quick"><button class="btn sm" data-act="one-csv">CSV</button><button class="btn sm" data-act="one-json">JSON</button><button class="btn sm" data-act="one-html">Printable HTML</button></div></div></div>${filesHtml(s.id)}${yearsHtml(s.id)}`:`<div class="card">${emptyHtml('No learners yet','Add students first.')}</div>`};
+    picks();card();
+  }
+  function importPane(){
+    const r=imp.res;
+    pane.innerHTML=`<div class="two"><section class="card"><h2>1. Prepare the file</h2><p style="color:var(--muted);margin-bottom:10px">One row per learning area. Columns: LRN, School Year, Grade Level, Section, School, School ID, Learning Area, Q1, Q2, Q3, Final. Grades are whole numbers from 60 to 100. A JSON file exported from this portal also works.</p><p style="color:var(--muted);margin-bottom:12px">Each LRN must already be in Students. Importing a year and grade that already has records replaces those records. The current school year (${SY}) is kept in the live records and cannot be imported.</p><div class="quick"><button class="btn" data-act="tpl">Download CSV template</button></div></section>
+    <section class="card"><h2>2. Add the data</h2><label class="fld" for="impfile"><span>Choose a CSV or JSON file</span><input type="file" id="impfile" accept=".csv,.json,.txt"></label><label class="fld" for="imptext" style="margin-top:10px"><span>Or paste it here</span><textarea class="csv" id="imptext" placeholder="LRN,School Year,Grade Level,...">${esc(imp.text)}</textarea></label><div class="actions"><button class="btn primary" data-act="check">Check data</button></div></section></div>
+    ${r?(r.fatal?`<div class="banner"><p>${esc(r.fatal)}</p></div>`:`<div class="tiles"><div class="tile"><span>Rows ready</span><b>${r.ok.length}</b><small>of ${r.total} rows</small></div><div class="tile"><span>Learners</span><b>${r.learners}</b></div><div class="tile"><span>Problems</span><b>${r.errors.length}</b><small>${r.errors.length?'These rows are skipped':'No problems found'}</small></div></div>
+    ${r.errors.length?`<div class="card flush"><div class="rhead"><h2>Rows with problems</h2><small>${r.errors.length>50?'Showing the first 50':r.errors.length+' row'+(r.errors.length===1?'':'s')}</small></div>${tableHtml([{t:'Row'},{t:'Problem'}],r.errors.slice(0,50).map(x=>`<tr><td>${x.line}</td><td>${esc(x.msg)}</td></tr>`))}</div>`:''}
+    <div class="actions" style="margin-top:0"><button class="btn primary" data-act="doimport"${r.ok.length?'':' disabled'}>Import ${r.ok.length} row${r.ok.length===1?'':'s'}</button></div>`):''}`;
+  }
+  function exportPane(){
+    const learners=sorted(),scope=ex.scope;
+    if(!ex.studentId||!S[ex.studentId])ex.studentId=learners[0]?learners[0].id:'';
+    pane.innerHTML=`<div class="card"><h2>Export SF10 records</h2><div class="fgrid">
+      <label class="fld" for="xs"><span>Who</span><select id="xs" data-x="scope"><option value="learner"${scope==='learner'?' selected':''}>One learner</option><option value="grade"${scope==='grade'?' selected':''}>Learners now in a grade level</option><option value="all"${scope==='all'?' selected':''}>All learners</option></select></label>
+      ${scope==='learner'?`<label class="fld" for="xl"><span>Learner</span><select id="xl" data-x="studentId">${learners.map(s=>`<option value="${s.id}"${s.id===ex.studentId?' selected':''}>${esc(fullName(s))} · ${esc(s.lrn)}</option>`).join('')}</select></label>`:scope==='grade'?`<label class="fld" for="xg"><span>Grade level</span><select id="xg" data-x="grade">${gradeOpts(ex.grade)}</select></label>`:'<span></span>'}
+      <label class="fld" for="xf"><span>Format</span><select id="xf" data-x="fmt"><option value="csv"${ex.fmt==='csv'?' selected':''}>CSV (opens in Excel)</option><option value="json"${ex.fmt==='json'?' selected':''}>JSON (for another copy of this portal)</option></select></label>
+      <label class="chk" for="xc" style="align-self:end"><input type="checkbox" id="xc" data-x="cur"${ex.cur?' checked':''}> Include school year ${SY}</label></div>
+      <p id="xsum" style="margin-top:12px;color:var(--muted)"></p><div class="actions"><button class="btn" data-act="x-copy">Copy</button><button class="btn primary" data-act="x-save">Export</button></div></div>`;
+    const rows=exportRows();
+    $('#xsum',pane).textContent=rows.length+' row'+(rows.length===1?'':'s')+' from '+new Set(rows.map(r=>r.lrn)).size+' learner'+(new Set(rows.map(r=>r.lrn)).size===1?'':'s')+' will be exported.';
+  }
+  function exportRows(){
+    let list;
+    if(ex.scope==='learner')list=db.students.filter(s=>s.id===ex.studentId);
+    else if(ex.scope==='grade')list=db.students.filter(s=>{const e=learnerEnr(s.id);return e&&String(e.grade)===String(ex.grade)});
+    else list=db.students;
+    return flatRows(list.slice().sort(byName),ex.cur);
+  }
+  const draw=()=>st.tab==='records'?recordsPane():st.tab==='import'?importPane():exportPane();
+  draw();
+  async function doExport(rows,label,fileBase,fmt){
+    const json=fmt==='json';
+    if(await saveFile(fileBase+(json?'.json':'.csv'),json?flatToJson(rows):'﻿'+flatToCsv(rows),json?'application/json':'text/csv','SF10 '+label))
+      commit('Exported SF10 ('+label+', '+rows.length+' rows)','Export','SF10 Import/Export');
+  }
+  view.onclick=async e=>{
+    const tab=e.target.closest('[data-tab]');
+    if(tab){st.tab=tab.dataset.tab;view.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===tab));draw();return}
+    const pick=e.target.closest('[data-pick]');if(pick){st.studentId=pick.dataset.pick;recordsPane();return}
+    const del=e.target.closest('[data-del]');
+    if(del){
+      const [sy,gr]=del.dataset.del.split('|'),s=S[st.studentId];
+      confirmBox('Remove imported record?',`Grade ${gr} (SY ${sy}) for ${s.first} ${s.last} will be removed from the SF10.`,'Remove',()=>{
+        db.sf10=db.sf10.filter(r=>!(r.studentId===st.studentId&&r.sy===sy&&String(r.grade)===gr));
+        commit(`Removed imported SF10 record: ${s.first} ${s.last}, Grade ${gr}, SY ${sy}`,'Delete','SF10 Import/Export');recordsPane();toast('Record removed');
+      });return;
+    }
+    const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,s=S[st.studentId];
+    if(a==='pick'){$('#pdfin',view).click();return}
+    if(a==='pdf-dl'){downloadPdf(b.dataset.id);return}
+    if(a==='pdf-rm'){
+      const f=(db.sf10Files||[]).find(x=>x.id===b.dataset.id);if(!f)return;
+      confirmBox('Remove PDF copy?',`"${f.label}" (${f.name}) will be deleted from this browser.`,'Remove',async()=>{
+        db.sf10Files=db.sf10Files.filter(x=>x.id!==f.id);try{await IDB.del(f.id)}catch(err){}
+        commit('Removed SF10 PDF copy of '+fullName(s)+' ('+f.name+')','Delete','SF10 Import/Export');recordsPane();toast('PDF removed');
+      });return;
+    }
+    if(a==='one-csv'||a==='one-json'){const rows=flatRows([s]);return doExport(rows,fullName(s),'SF10_'+slug(s.last+'-'+s.first)+'_'+todayISO(),a==='one-json'?'json':'csv')}
+    if(a==='one-html'){if(await saveFile('SF10_'+slug(s.last+'-'+s.first)+'_'+todayISO()+'.html',docHtml(sf10Doc(s.id)),'text/html','SF10'))commit('Exported SF10 printable form for '+fullName(s),'Export','SF10 Import/Export');return}
+    if(a==='tpl'){
+      const f=db.students[0],ex1=f?f.lrn:'123456789012';
+      const rows=[['LRN','School Year','Grade Level','Section','School','School ID','Learning Area','Q1','Q2','Q3','Final'],[ex1,'2024-2025','6','Mabini','Sample Elementary School','123456','Mathematics','85','86','88','86'],[ex1,'2024-2025','6','Mabini','Sample Elementary School','123456','English','90','89','91','90']];
+      await saveFile('sf10-import-template.csv',toCSV(rows),'text/csv','template');return;
+    }
+    if(a==='check'){imp.text=$('#imptext',pane).value;imp.res=sf10Validate(imp.text);importPane();return}
+    if(a==='doimport'){
+      const r=imp.res;if(!r||!r.ok)return;
+      const blocks=new Set(r.ok.map(x=>x.studentId+'|'+x.sy+'|'+x.grade));
+      db.sf10=(db.sf10||[]).filter(x=>!blocks.has(x.studentId+'|'+x.sy+'|'+x.grade)).concat(r.ok.map(x=>Object.assign({id:uid('h')},x)));
+      commit(`Imported ${r.ok.length} SF10 rows for ${r.learners} learner${r.learners===1?'':'s'}`,'Import','SF10 Import/Export');
+      toast(`Imported ${r.ok.length} rows`);imp.text='';imp.res=null;st.tab='records';
+      view.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x.dataset.tab==='records'));draw();return;
+    }
+    if(a==='x-save'||a==='x-copy'){
+      const rows=exportRows();if(!rows.length)return toast('There are no records to export.','err');
+      const label=ex.scope==='learner'?fullName(S[ex.studentId]):ex.scope==='grade'?'Grade '+ex.grade:'all learners';
+      if(a==='x-copy')return copyText(ex.fmt==='json'?flatToJson(rows):flatToCsv(rows),'SF10 data');
+      return doExport(rows,label,'SF10_'+slug(label)+'_'+todayISO(),ex.fmt);
+    }
+  };
+  view.oninput=e=>{
+    if(e.target.id==='rq'){st.q=e.target.value;const q=st.q.toLowerCase(),l=sorted().filter(s=>!q||(s.lrn+' '+fullName(s)).toLowerCase().includes(q)).slice(0,50);$('#picks',pane).innerHTML=l.length?l.map(s=>`<button data-pick="${s.id}" class="${s.id===st.studentId?'on':''}"><b>${esc(fullName(s))}</b><small>LRN ${esc(s.lrn)} · ${sf10Years(s.id).length} year(s) on record</small></button>`).join(''):emptyHtml('No match')}
+    else if(e.target.id==='imptext')imp.text=e.target.value;
+  };
+  view.onchange=e=>{
+    const t=e.target;
+    if(t.id==='pdfin'){startPdfUpload(t,st.studentId,recordsPane);return}
+    if(t.id==='impfile'&&t.files&&t.files[0]){
+      const rd=new FileReader();
+      rd.onload=()=>{imp.text=String(rd.result||'');imp.res=sf10Validate(imp.text);importPane()};
+      rd.onerror=()=>toast('That file could not be read.','err');
+      rd.readAsText(t.files[0]);return;
+    }
+    const k=t.dataset.x;if(!k)return;
+    if(k==='cur')ex.cur=t.checked;else ex[k]=t.value;
+    exportPane();
+  };
+};
+
+/* ---------- Subject-teacher scope ---------- */
+function defaultAssignments(t){
+  const out=[],mk=(g,sub)=>out.push({id:uid('as'),grade:g,section:'all',subject:sub});
+  if(JHS.includes(t.dept))[7,8,9,10].forEach(g=>mk(g,t.dept));
+  else if(t.dept==='Senior High')[11,12].forEach(g=>{mk(g,'Oral Communication');mk(g,'Empowerment Technologies')});
+  return out;
+}
+function teacherScope(){
+  const u=getUser();if(!u||u.role!=='Teacher')return null;
+  const t=db.teachers.find(x=>x.id===u.teacherId)||null;
+  return {teacher:t,list:t&&Array.isArray(t.assignments)?t.assignments.filter(a=>subjectsFor(a.grade).includes(a.subject)):[]};
+}
+const scopeGrades=sc=>[...new Set(sc.list.map(a=>Number(a.grade)))].sort((a,b)=>a-b);
+function scopeSections(sc,g){
+  const all=sectionsFor(g),m=sc.list.filter(a=>Number(a.grade)===Number(g));
+  return m.some(a=>a.section==='all')?all:all.filter(s=>m.some(a=>a.section===s));
+}
+const scopeSubjects=(sc,g,sec)=>[...new Set(sc.list.filter(a=>Number(a.grade)===Number(g)&&(a.section==='all'||a.section===sec)).map(a=>a.subject))];
+const canGrade=(sc,g,sec,sub)=>scopeSubjects(sc,g,sec).includes(sub);
+const gradeOptsList=(list,sel)=>list.map(g=>`<option value="${g}"${String(g)===String(sel)?' selected':''}>Grade ${g}</option>`).join('');
+const sectionsAny=g=>[...new Set(db.enrollments.filter(e=>e.sy===SY&&e.grade===Number(g)).map(e=>e.section))].sort();
+function assignText(t){
+  const by={};
+  (t.assignments||[]).forEach(a=>{(by[a.subject]=by[a.subject]||[]).push('G'+a.grade+(a.section==='all'?'':' '+a.section))});
+  const k=Object.keys(by);
+  return k.length?k.map(s=>s+' ('+by[s].join(', ')+')').join('; '):'';
+}
+function noAssignment(view,title){
+  view.innerHTML=pageHead(title,'')+`<div class="card">${emptyHtml('No subjects assigned to you yet','Ask the administrator to assign your subjects and classes under Teachers. Until then there is nothing to show here.')}</div>`;
+}
+function teacherHome(view){
+  const u=getUser(),sc=teacherScope();
+  if(!sc.teacher||!sc.list.length)return noAssignment(view,'Dashboard');
+  const rows=[],ids=new Set();
+  sc.list.slice().sort((a,b)=>a.grade-b.grade||a.subject.localeCompare(b.subject)).forEach(a=>{
+    (a.section==='all'?sectionsFor(a.grade):[a.section]).forEach(sec=>{
+      const kids=enrolledIn(a.grade,sec);if(!kids.length)return;
+      let done=0;kids.forEach(e=>{ids.add(e.id);if(getG(e.id,a.subject).every(v=>v!=null))done++});
+      rows.push({grade:a.grade,section:sec,subject:a.subject,n:kids.length,done});
+    });
+  });
+  const nU=unreadCount(u),t=sc.teacher;
+  view.innerHTML=pageHead('Hello, '+u.name.split(' ')[0],`${esc(fullName(t))} · school year ${SY}`)+
+  `<div class="tiles">
+    <div class="tile"><span>My subjects</span><b>${new Set(sc.list.map(a=>a.subject)).size}</b><small>${esc([...new Set(sc.list.map(a=>a.subject))].join(', '))}</small></div>
+    <div class="tile"><span>My classes</span><b>${rows.length}</b><small>grade and section pairs</small></div>
+    <div class="tile"><span>My learners</span><b>${ids.size}</b><small>across your classes</small></div>
+    <div class="tile"><span>Unread messages</span><b>${nU}</b><small>${t.advisory?'Adviser of '+esc(t.advisory):'No advisory class'}</small></div>
+  </div>
+  <section class="card flush"><div class="rhead"><h2>My teaching assignments</h2><small>You can see and encode grades only for these.</small></div>
+  ${rows.length?tableHtml([{t:'Subject'},{t:'Grade & section'},{t:'Learners',num:1},{t:'Fully graded',num:1},{t:''}],rows.map((r,i)=>`<tr><td><b>${esc(r.subject)}</b></td><td>Grade ${r.grade} - ${esc(r.section)}</td><td class="num">${r.n}</td><td class="num">${r.done} of ${r.n}</td><td class="acts"><button class="btn sm primary" data-i="${i}">Encode grades</button></td></tr>`)):emptyHtml('No enrolled learners in your classes yet')}</section>`;
+  view.onclick=e=>{const b=e.target.closest('[data-i]');if(!b)return;const r=rows[Number(b.dataset.i)];Object.assign(ui.grades,{grade:r.grade,section:r.section,subject:r.subject,dirty:false});location.hash='grades'};
+}
+function openAssign(t,onDone){
+  t.assignments=t.assignments||[];
+  const m=modal(`<h2>Subject assignments</h2><p class="msg">${esc(fullName(t))} can see and encode grades only for the subjects and classes listed here.</p><div id="alist" style="margin:12px 0"></div><form id="aform" novalidate><div class="fgrid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"><label class="fld" for="ag"><span>Grade level</span><select id="ag">${gradeOpts(7)}</select></label><label class="fld" for="as"><span>Section</span><select id="as"></select></label><label class="fld" for="au"><span>Subject</span><select id="au"></select></label></div><p class="ferr" id="aerr" role="alert" hidden></p><div class="actions"><button type="button" class="btn" data-close>Done</button><button type="submit" class="btn primary">Add assignment</button></div></form>`,{wide:true,onDismiss:onDone});
+  const el=m.el,g=$('#ag',el),s=$('#as',el),u=$('#au',el),err=$('#aerr',el);
+  const fill=()=>{
+    s.innerHTML='<option value="all">All sections</option>'+sectionsAny(g.value).map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+    u.innerHTML=options(subjectsFor(g.value));
+  };
+  const draw=()=>{
+    $('#alist',el).innerHTML=t.assignments.length?`<div class="tablewrap">${tableHtml([{t:'Grade'},{t:'Section'},{t:'Subject'},{t:''}],t.assignments.slice().sort((a,b)=>a.grade-b.grade||a.subject.localeCompare(b.subject)).map(a=>`<tr><td>Grade ${a.grade}</td><td>${a.section==='all'?'All sections':esc(a.section)}</td><td>${esc(a.subject)}</td><td class="acts"><button type="button" class="btn sm danger" data-rm="${a.id}">Remove</button></td></tr>`))}</div>`:emptyHtml('No subjects assigned yet','Add one below.');
+  };
+  fill();draw();
+  g.onchange=fill;
+  el.addEventListener('click',e=>{
+    const b=e.target.closest('[data-rm]');if(!b)return;
+    const a=t.assignments.find(x=>x.id===b.dataset.rm);if(!a)return;
+    t.assignments=t.assignments.filter(x=>x.id!==a.id);
+    commit(`Removed ${a.subject} assignment (Grade ${a.grade}${a.section==='all'?'':' - '+a.section}) from ${t.first} ${t.last}`,'Delete','Teachers');draw();
+  });
+  el.querySelector('#aform').addEventListener('submit',e=>{
+    e.preventDefault();
+    const gr=Number(g.value),sec=s.value,sub=u.value;
+    const clash=db.teachers.find(o=>(o.assignments||[]).some(a=>Number(a.grade)===gr&&a.subject===sub&&(a.section==='all'||sec==='all'||a.section===sec)));
+    if(clash){err.textContent=clash.id===t.id?'This class is already covered by an existing assignment.':`${clash.first} ${clash.last} already teaches ${sub} to ${sec==='all'?'part of Grade '+gr:'that class'}. Remove that assignment first.`;err.hidden=false;return}
+    err.hidden=true;
+    t.assignments.push({id:uid('as'),grade:gr,section:sec,subject:sub});
+    commit(`Assigned ${sub} (Grade ${gr}${sec==='all'?'':' - '+sec}) to ${t.first} ${t.last}`,'Update','Teachers');draw();toast('Assignment added');
+  });
+}
+
+/* ---------- Google Sheets integration ---------- */
+const toTSV=rows=>rows.map(r=>r.map(c=>String(c==null?'':c).replace(/[\t\r\n]+/g,' ')).join('\t')).join('\n');
+function sheetCsvUrl(url){
+  const u=String(url||'').trim(),gid=/[#&?]gid=(\d+)/.exec(u);
+  const pub=/docs\.google\.com\/spreadsheets\/d\/e\/([\w-]+)/.exec(u);
+  if(pub)return 'https://docs.google.com/spreadsheets/d/e/'+pub[1]+'/pub?output=csv'+(gid?'&gid='+gid[1]:'');
+  const d=/docs\.google\.com\/spreadsheets\/d\/([\w-]+)/.exec(u);
+  if(d)return 'https://docs.google.com/spreadsheets/d/'+d[1]+'/export?format=csv'+(gid?'&gid='+gid[1]:'');
+  return null;
+}
+async function fetchSheet(url){
+  const u=sheetCsvUrl(url);
+  if(!u)throw new Error('That is not a Google Sheets link. Copy the address from your browser while the sheet is open.');
+  let res;
+  try{res=await fetch(u,{credentials:'omit'})}
+  catch(e){throw new Error('The browser did not allow the download. This view cannot reach Google. Copy the cells in Google Sheets and paste them below, or open the downloaded portal file and try again.')}
+  if(!res.ok)throw new Error('Google returned an error ('+res.status+'). Share the sheet with "Anyone with the link" as Viewer, or publish it to the web.');
+  return res.text();
+}
+function parseGradeSheet(text,rows){
+  const t=(text||'').trim();
+  if(!t)return {fatal:'Paste the cells or fetch the sheet first.'};
+  if(t[0]==='<')return {fatal:'That looks like a web page, not sheet data. The sheet may not be shared. Share it with "Anyone with the link" or paste the cells instead.'};
+  const delim=t.split(/\r?\n/)[0].includes('\t')?'\t':',';
+  const tbl=parseCSV(t,delim);
+  if(tbl.length<2)return {fatal:'The sheet needs a header row and at least one learner row.'};
+  const hdr=tbl[0].map(h=>h.toLowerCase().replace(/[^a-z0-9]/g,''));
+  const ci=(...n)=>{for(const k of n){const i=hdr.indexOf(k);if(i>=0)return i}return -1};
+  const c={lrn:ci('lrn'),q:[ci('q1','1stquarter','firstquarter'),ci('q2','2ndquarter','secondquarter'),ci('q3','3rdquarter','thirdquarter')]};
+  if(c.lrn<0)return {fatal:'The sheet needs an LRN column in the header row.'};
+  if(c.q.every(i=>i<0))return {fatal:'The sheet needs at least one of the columns Q1, Q2, Q3.'};
+  const S=sMap(),byLrn=new Map(rows.map(e=>[S[e.studentId].lrn,e]));
+  const num=v=>{const s=String(v==null?'':v).trim();if(s==='')return {v:null,ok:true};if(!/^\d{2,3}$/.test(s))return {v:null,ok:false};const n=Number(s);return {v:n,ok:n>=60&&n<=100}};
+  const changes=[],seen=new Set();
+  tbl.slice(1).forEach((r,i)=>{
+    const line=i+2,lrn=String(r[c.lrn]||'').trim(),e=byLrn.get(lrn);
+    if(!lrn)return;
+    if(!e){changes.push({line,name:lrn,status:'error',msg:'LRN is not in this class'});return}
+    if(seen.has(lrn)){changes.push({line,name:fullName(S[e.studentId]),status:'error',msg:'Duplicate row for this learner'});return}
+    seen.add(lrn);
+    const vals=c.q.map(ix=>ix<0?{v:null,ok:true}:num(r[ix]));
+    if(vals.some(x=>!x.ok)){changes.push({line,name:fullName(S[e.studentId]),status:'error',msg:'Grades must be whole numbers from 60 to 100'});return}
+    const old=getG(e.id,ctxSubject).slice(0,3),next=vals.map(x=>x.v);
+    const changed=next.some((v,k)=>v!=null&&v!==old[k]);
+    changes.push({line,e,name:fullName(S[e.studentId]),old,next,status:changed?'changed':'same'});
+  });
+  return {changes,changed:changes.filter(x=>x.status==='changed').length,same:changes.filter(x=>x.status==='same').length,errors:changes.filter(x=>x.status==='error').length,missing:rows.filter(e=>!seen.has(S[e.studentId].lrn)).length};
+}
+let ctxSubject='';
+function openSheetExport(o){
+  const all=[o.head].concat(o.rows);
+  const m=modal(`<h2>Send to Google Sheets</h2><p class="msg">${esc(o.title)}</p><ol style="margin:12px 0 0;padding-left:20px;line-height:1.8"><li>Click <b>Copy for Google Sheets</b>.</li><li>Open a new Google Sheet.</li><li>Click cell A1 and paste.</li></ol><p style="margin-top:8px"><small>Prefer a file? Download the CSV, then use File, Import in Google Sheets.</small></p><div class="actions"><a class="btn" href="https://sheets.new" target="_blank" rel="noopener">Open new Google Sheet</a><button class="btn" data-x="csv">Download CSV</button><button class="btn primary" data-x="copy">Copy for Google Sheets</button></div>`);
+  m.el.addEventListener('click',async e=>{
+    const b=e.target.closest('[data-x]');if(!b)return;
+    if(b.dataset.x==='copy'){
+      const tsv=toTSV(all);
+      const done=()=>{toast('Copied. Paste it into cell A1 of a Google Sheet.');commit('Exported to Google Sheets: '+o.title,'Export',o.module)};
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(tsv).then(done,()=>{m.close();copyText(tsv,'sheet data')});else{m.close();copyText(tsv,'sheet data')}
+    }else if(await saveFile(o.base+'_'+todayISO()+'.csv','﻿'+toCSV(all),'text/csv','sheet'))commit('Exported CSV for Google Sheets: '+o.title,'Export',o.module);
+  });
+}
+let xlsxP=null;
+function loadXlsx(){
+  if(window.XLSX)return Promise.resolve(window.XLSX);
+  if(xlsxP)return xlsxP;
+  xlsxP=new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload=()=>window.XLSX?res(window.XLSX):rej(new Error('x'));
+    s.onerror=()=>rej(new Error('x'));
+    document.head.appendChild(s);
+  }).catch(()=>{xlsxP=null;throw new Error('The Excel reader could not be loaded. It needs an internet connection. Save the sheet as CSV, or paste the cells, instead.')});
+  return xlsxP;
+}
+async function xlsxToText(buf){
+  const X=await loadXlsx(),wb=X.read(new Uint8Array(buf),{type:'array'});
+  for(const n of wb.SheetNames){const csv=X.utils.sheet_to_csv(wb.Sheets[n]);if(/\blrn\b/i.test(csv.split('\n').slice(0,10).join('\n')))return csv}
+  return X.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]);
+}
+async function makeXlsx(head,rows,name){
+  const X=await loadXlsx(),ws=X.utils.aoa_to_sheet([head].concat(rows));
+  ws['!cols']=head.map((h,i)=>({wch:i===0?15:i===1?30:10}));
+  const wb=X.utils.book_new();
+  X.utils.book_append_sheet(wb,ws,String(name).replace(/[\\\/?*\[\]:]/g,' ').slice(0,31));
+  return X.write(wb,{bookType:'xlsx',type:'array'});
+}
+const spLinkOk=u=>{try{const x=new URL(u);return x.protocol==='https:'&&/(sharepoint\.com|1drv\.ms|onedrive\.live\.com|office\.com|microsoft\.com)$/i.test(x.hostname)}catch(e){return false}};
+function openGradesSheets(ctx,prov){
+  const sp=prov==='sharepoint',S=sMap(),sub=ctx.subject,label='Grade '+ctx.grade+' - '+ctx.section+' · '+sub;
+  const links=(db.sheetLinks=db.sheetLinks||{}),key=(sp?'sp:':'')+ctx.grade+'|'+ctx.section+'|'+sub,svc=sp?'SharePoint':'Google Sheets';
+  ctxSubject=sub;
+  const head=['LRN','Learner','Q1','Q2','Q3','Final'];
+  const rows=ctx.rows.map(e=>{const s=S[e.studentId],g=getG(e.id,sub);return [s.lrn,fullName(s),g[0]??'',g[1]??'',g[2]??'',finalOf(g)??'']});
+  const base='grades_g'+ctx.grade+'-'+slug(ctx.section)+'_'+slug(sub)+'_'+todayISO();
+  const m=modal(`<h2>${sp?'SharePoint / Excel':'Google Sheets'}</h2><p class="msg">${esc(label)}</p><div class="tabs" style="margin-top:8px"><button type="button" data-t="send" class="on">Send</button><button type="button" data-t="get">Get</button></div><div id="gp" style="padding-top:14px"></div>`,{wide:true});
+  const gp=$('#gp',m.el);let res=null,tab='send';
+  const openBtn=()=>links[key]?`<a class="btn" href="${esc(links[key])}" target="_blank" rel="noopener">Open in SharePoint</a>`:'';
+  function send(){
+    gp.innerHTML=sp?
+    `<p style="color:var(--muted)">Sends the class list with the grades saved so far. Upload the file to your SharePoint library, or open your Excel file in SharePoint and paste at cell A1. Use <b>Get</b> to bring edited grades back.</p>
+     <ol style="margin:10px 0 0;padding-left:20px;line-height:1.8"><li>Click <b>Download Excel file</b>, then upload it to SharePoint.</li><li>Or click <b>Copy for Excel</b>, open a workbook in SharePoint, click A1 and paste.</li></ol>
+     <div class="actions">${openBtn()}<button class="btn" data-g="csv">Download CSV</button><button class="btn" data-g="copy">Copy for Excel</button><button class="btn primary" data-g="xlsx">Download Excel file</button></div>`:
+    `<p style="color:var(--muted)">Copies the class list with the grades saved so far. Edit or share it in Google Sheets, then use <b>Get</b> to bring grades back.</p><ol style="margin:10px 0 0;padding-left:20px;line-height:1.8"><li>Click <b>Copy for Google Sheets</b>.</li><li>Open a new Google Sheet, click cell A1 and paste.</li></ol><div class="actions"><a class="btn" href="https://sheets.new" target="_blank" rel="noopener">Open new Google Sheet</a><button class="btn" data-g="csv">Download CSV</button><button class="btn primary" data-g="copy">Copy for Google Sheets</button></div>`;
+  }
+  function resultHtml(){
+    if(!res)return '';
+    if(res.fatal)return `<p class="ferr">${esc(res.fatal)}</p>`;
+    const cell=(c,k)=>{const o=c.old[k],n=c.next[k];return n!=null&&n!==o?`<span style="color:var(--muted)">${o==null?'—':o} →</span> <b>${n}</b>`:(o==null?'—':o)};
+    return `<p style="margin:12px 0 6px"><b>${res.changed}</b> learner${res.changed===1?'':'s'} will change, ${res.same} unchanged${res.errors?`, <span style="color:var(--bad)">${res.errors} with problems (skipped)</span>`:''}${res.missing?`, ${res.missing} in the class not in the file`:''}.</p>
+    <div class="tablewrap" style="max-height:260px;overflow-y:auto">${tableHtml([{t:'Row'},{t:'Learner'},{t:'Q1',num:1},{t:'Q2',num:1},{t:'Q3',num:1},{t:'Status'}],res.changes.slice(0,200).map(c=>c.status==='error'?`<tr><td>${c.line}</td><td>${esc(c.name)}</td><td colspan="3" style="color:var(--bad)">${esc(c.msg)}</td><td>${pill('Failed')}</td></tr>`:`<tr><td>${c.line}</td><td>${esc(c.name)}</td>${[0,1,2].map(k=>`<td class="num">${cell(c,k)}</td>`).join('')}<td>${c.status==='changed'?pill('Pending'):pill('Passed')}</td></tr>`))}</div>
+    <div class="actions"><button class="btn primary" data-g="apply"${res.changed?'':' disabled'}>Apply ${res.changed} change${res.changed===1?'':'s'}</button></div>`;
+  }
+  function get(){
+    const cols=`<p style="color:var(--muted)">Columns needed: <b>LRN</b> and any of <b>Q1, Q2, Q3</b>. Blank cells leave the saved grade unchanged. Nothing is saved until you press Apply.</p>`;
+    const paste=`<label class="fld" for="gs-text"><span>${sp?'Paste the cells copied from Excel in SharePoint':'Or paste the cells from Google Sheets (or a CSV)'}</span><textarea class="csv" id="gs-text" style="height:110px"></textarea></label>
+    <label class="fld" for="gs-file" style="margin-top:8px"><span>${sp?'Or choose the Excel file (.xlsx) or a CSV you downloaded from SharePoint':'Or choose a CSV file'}</span><input type="file" id="gs-file" accept="${sp?'.xlsx,.xls,.csv,.tsv,.txt':'.csv,.tsv,.txt'}"></label>
+    <div class="actions" style="margin-top:10px"><button class="btn primary" data-g="check">Check data</button></div><div id="gs-res">${resultHtml()}</div>`;
+    gp.innerHTML=sp?
+    `${cols}<label class="fld" for="gs-url" style="margin-top:10px"><span>Link to the file in SharePoint (saved for this class and subject)</span><input id="gs-url" type="url" placeholder="https://yourschool.sharepoint.com/..." value="${esc(links[key]||'')}"></label>
+     <div class="quick" style="margin:8px 0"><button class="btn" data-g="savelink">Save link</button>${openBtn()}</div>
+     <small>The portal cannot sign in to Microsoft for you, so it cannot read the file by itself. Open the link, copy the cells or download the file, then bring it here.</small><div style="height:10px"></div>${paste}`:
+    `${cols}<label class="fld" for="gs-url" style="margin-top:10px"><span>Link to the Google Sheet</span><input id="gs-url" type="url" placeholder="https://docs.google.com/spreadsheets/d/..." value="${esc(links[key]||'')}"></label>
+     <small>Share it as "Anyone with the link can view", or use File, Share, Publish to web. Fetching a link works when you open the downloaded portal file. In the published page, paste the cells below instead.</small>
+     <div class="quick" style="margin:8px 0"><button class="btn" data-g="fetch">Fetch from link</button></div>${paste}`;
+  }
+  const draw=()=>tab==='send'?send():get();
+  draw();
+  const check=()=>{res=parseGradeSheet($('#gs-text',m.el).value,ctx.rows);$('#gs-res',m.el).innerHTML=resultHtml()};
+  m.el.addEventListener('click',async e=>{
+    const t=e.target.closest('[data-t]');
+    if(t){tab=t.dataset.t;m.el.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===t));draw();return}
+    const b=e.target.closest('[data-g]');if(!b)return;
+    const act=b.dataset.g;
+    if(act==='copy'){
+      const tsv=toTSV([head].concat(rows));
+      const done=()=>{toast(sp?'Copied. Paste it into cell A1 of an Excel workbook.':'Copied. Paste it into cell A1 of a Google Sheet.');commit('Exported to '+svc+': '+label,'Export','Grades')};
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(tsv).then(done,()=>{m.close();copyText(tsv,'sheet data')});else{m.close();copyText(tsv,'sheet data')}
+    }else if(act==='csv'){
+      if(await saveFile(base+'.csv','﻿'+toCSV([head].concat(rows)),'text/csv','sheet'))commit('Exported CSV for '+svc+': '+label,'Export','Grades');
+    }else if(act==='xlsx'){
+      b.disabled=true;
+      try{
+        const data=await makeXlsx(head,rows,sub);
+        if(await saveFile(base+'.xlsx',data,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','Excel file'))commit('Exported Excel file for SharePoint: '+label,'Export','Grades');
+      }catch(err){toast(err.message,'err')}
+      b.disabled=false;
+    }else if(act==='savelink'){
+      const url=$('#gs-url',m.el).value.trim();
+      if(!url){delete links[key];persist();toast('Link removed');get();return}
+      if(!spLinkOk(url)){res={fatal:'That does not look like a SharePoint or OneDrive link. It should start with https:// and come from sharepoint.com, onedrive.live.com or 1drv.ms.'};$('#gs-res',m.el).innerHTML=resultHtml();return}
+      links[key]=url;persist();toast('Link saved');get();
+    }else if(act==='fetch'){
+      const url=$('#gs-url',m.el).value.trim();b.disabled=true;
+      try{const text=await fetchSheet(url);$('#gs-text',m.el).value=text;links[key]=url;persist();check()}
+      catch(err){res={fatal:err.message};$('#gs-res',m.el).innerHTML=resultHtml()}
+      b.disabled=false;
+    }else if(act==='check'){check()}
+    else if(act==='apply'){
+      const sc=teacherScope();
+      if(sc&&!canGrade(sc,ctx.grade,ctx.section,sub)){toast('You are not assigned to this subject.','err');return}
+      let n=0;
+      res.changes.filter(c=>c.status==='changed').forEach(c=>{
+        const cur=getG(c.e.id,sub).slice(0,3);
+        db.grades[c.e.id]=db.grades[c.e.id]||{};
+        db.grades[c.e.id][sub]=cur.map((v,k)=>c.next[k]!=null?c.next[k]:v);n++;
+      });
+      commit('Imported grades from '+svc+': '+label+' ('+n+' learner'+(n===1?'':'s')+')','Import','Grades');
+      m.close();toast('Applied changes for '+n+' learner'+(n===1?'':'s'));ctx.onApplied();
+    }
+  });
+  m.el.addEventListener('change',e=>{
+    if(e.target.id!=='gs-file'||!e.target.files[0])return;
+    const f=e.target.files[0],isX=/\.xlsx?$/i.test(f.name),rd=new FileReader();
+    rd.onerror=()=>toast('That file could not be read.','err');
+    rd.onload=async()=>{
+      try{$('#gs-text',m.el).value=isX?await xlsxToText(rd.result):String(rd.result||'');check()}
+      catch(err){res={fatal:err.message};$('#gs-res',m.el).innerHTML=resultHtml()}
+    };
+    if(isX)rd.readAsArrayBuffer(f);else rd.readAsText(f);
+  });
+}
+
+/* ---------- SF10 PDF copies (stored in this browser) ---------- */
+const PDF_MAX=10*1024*1024;
+const IDB={
+  open(){return new Promise((res,rej)=>{
+    if(typeof indexedDB==='undefined'){rej(new Error('nodb'));return}
+    const r=indexedDB.open('gebpsoics-files',1);
+    r.onupgradeneeded=()=>r.result.createObjectStore('pdf');
+    r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error||new Error('nodb'));
+  })},
+  async run(mode,fn){
+    const d=await this.open();
+    return new Promise((res,rej)=>{
+      const t=d.transaction('pdf',mode),st=t.objectStore('pdf');let out;
+      try{out=fn(st)}catch(e){rej(e);return}
+      t.oncomplete=()=>{d.close();res(out&&'result' in out?out.result:undefined)};
+      t.onerror=()=>{d.close();rej(t.error)};t.onabort=()=>{d.close();rej(t.error||new Error('abort'))};
+    });
+  },
+  put(k,v){return this.run('readwrite',s=>s.put(v,k))},
+  get(k){return this.run('readonly',s=>s.get(k))},
+  del(k){return this.run('readwrite',s=>s.delete(k))}
+};
+const fmtSize=n=>n>=1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB';
+async function purgeFiles(studentId){
+  const all=db.sf10Files||[],gone=all.filter(f=>!studentId||f.studentId===studentId);
+  db.sf10Files=all.filter(f=>!gone.includes(f));
+  for(const f of gone){try{await IDB.del(f.id)}catch(e){}}
+}
+function filesHtml(studentId){
+  const list=(db.sf10Files||[]).filter(f=>f.studentId===studentId).sort((a,b)=>b.t-a.t);
+  return `<section class="card flush" style="margin-bottom:12px"><div class="rhead"><div><h3>Uploaded SF10 copies</h3><small>PDF files up to 10 MB. Kept in this browser only.</small></div><div><button class="btn primary sm" data-act="pick">${ICON.plus} Upload PDF</button><input type="file" id="pdfin" accept=".pdf,application/pdf" hidden></div></div>
+  ${list.length?tableHtml([{t:'Description'},{t:'Source'},{t:'File'},{t:'Uploaded'},{t:''}],list.map(f=>`<tr><td><b>${esc(f.label)}</b></td><td>${esc(f.source)}</td><td>${esc(f.name)}<small>${fmtSize(f.size)}</small></td><td>${esc(fmtDate(f.t))}<small>${esc(f.by)}</small></td><td class="acts"><button class="btn sm" data-act="pdf-dl" data-id="${f.id}">Download</button><button class="btn sm danger" data-act="pdf-rm" data-id="${f.id}">Remove</button></td></tr>`)):emptyHtml('No PDF copies uploaded','Upload a scanned SF10 or one received from a previous school.')}</section>`;
+}
+async function startPdfUpload(input,studentId,onDone){
+  const f=input.files&&input.files[0];input.value='';
+  if(!f)return;
+  const s=sMap()[studentId];if(!s)return;
+  if(!/\.pdf$/i.test(f.name)&&f.type!=='application/pdf')return toast('Choose a PDF file.','err');
+  if(f.size>PDF_MAX)return toast('That file is '+fmtSize(f.size)+'. The limit is 10 MB.','err');
+  if(f.size<8)return toast('That file is empty.','err');
+  const buf=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsArrayBuffer(f)}).catch(()=>null);
+  if(!buf)return toast('That file could not be read.','err');
+  const head=String.fromCharCode.apply(null,new Uint8Array(buf.slice(0,5)));
+  if(head!=='%PDF-')return toast('That file is not a valid PDF.','err');
+  openForm({title:'Upload SF10 copy for '+s.first+' '+s.last,
+    fields:[{key:'label',label:'Description',required:true,full:true,hint:f.name},{key:'source',label:'Source',type:'select',full:true,options:['Previous school','Scanned original','Issued by this school','Other']}],
+    values:{label:'SF10 copy',source:'Previous school'},
+    async onSave(v){
+      const id=uid('f');
+      try{await IDB.put(id,buf)}
+      catch(e){return 'The file could not be stored. This browser may be blocking or has run out of storage.'}
+      const u=getUser();
+      (db.sf10Files=db.sf10Files||[]).push({id,studentId,label:v.label,source:v.source,name:f.name,size:f.size,t:Date.now(),by:u?u.name:''});
+      commit('Imported SF10 PDF copy for '+fullName(s)+' ('+f.name+')','Import','SF10 Import/Export');
+      toast('PDF uploaded');onDone();
+    }});
+}
+async function downloadPdf(id){
+  const meta=(db.sf10Files||[]).find(f=>f.id===id);if(!meta)return;
+  let buf;try{buf=await IDB.get(id)}catch(e){buf=null}
+  if(!buf)return toast('The stored file could not be found in this browser.','err');
+  const s=sMap()[meta.studentId];
+  if(await saveFile(meta.name.replace(/[^\w.\- ]+/g,'_'),buf,'application/pdf',meta.name))commit('Exported SF10 PDF copy of '+(s?fullName(s):'a learner')+' ('+meta.name+')','Export','SF10 Import/Export');
+}
+
+/* ---------- boot ---------- */
+async function migrate(){
+  if(!db.messages)db.messages=[];
+  if(!db.sf10Files)db.sf10Files=[];
+  if(db.teachers.some(t=>!Array.isArray(t.assignments))){db.teachers.forEach(t=>{if(!Array.isArray(t.assignments))t.assignments=(db.meta&&db.meta.sample)?defaultAssignments(t):[]});persist()}
+  if(!db.sf10){db.sf10=(db.meta&&db.meta.sample&&db.students.length)?makeHistory():[];persist()}
+  if(!db.audit){db.audit=db.log.map(l=>({id:uid('a'),t:l.t,userId:'',who:l.who,role:'',action:inferAction(l.msg),module:'—',detail:l.msg}));persist()}
+  if(db.meta&&!db.meta.threeQuarters){db.meta.threeQuarters=true;Object.values(db.grades||{}).forEach(o=>Object.keys(o).forEach(s=>{if(o[s].length>3)o[s]=o[s].slice(0,3)}));persist()}
+  if(db.meta&&db.meta.sample&&!db.meta.familySeeded){
+    db.meta.familySeeded=true;
+    if(db.students.length&&!db.users.some(u=>FAMILY.includes(u.role))){
+      const extra=(await seedUsers(db.students)).filter(u=>FAMILY.includes(u.role));
+      db.users.push(...extra);
+      const tu=db.users.find(u=>u.role==='Teacher'&&u.username==='teacher'&&!u.teacherId);
+      if(tu&&db.teachers.some(t=>t.id==='t1'))tu.teacherId='t1';
+      if(!db.messages.length)addSampleThread();
+    }
+    persist();
+  }
+}
+async function init(){
+  try{const t=localStorage.getItem(THEME_KEY);if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}
+  try{localStorage.setItem('gebpsoics.t','1');localStorage.removeItem('gebpsoics.t')}catch(e){storageOk=false}
+  const stored=load();
+  if(stored&&stored.v===1){db=stored}
+  else{db=Object.assign({v:1,meta:{sample:true,familySeeded:true},users:[],log:[],messages:[],audit:[],sf10:[]},seed());db.sf10=makeHistory();db.users=await seedUsers(db.students);addSampleThread();persist()}
+  await migrate();
+  try{session=sessionStorage.getItem(SKEY)}catch(e){}
+  if(!getUser())session=null;
+  render();
+}
+init();
+})();
+</script>
